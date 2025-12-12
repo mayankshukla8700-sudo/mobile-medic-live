@@ -1,135 +1,157 @@
 "use client";
 
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { useState } from "react";
-import { supabase } from "@/lib/supabase"; // <--- Importing the bridge
+import { Loader2, CheckCircle2 } from "lucide-react"; // Nice icons
 
-export default function RepairForm({ model }: { model: string }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function RepairForm({ selectedBrand }: { selectedBrand: string }) {
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   
-  // State to store user inputs
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [issue, setIssue] = useState("Broken Screen"); // Default issue
-  const [price, setPrice] = useState("₹2,499");      // Default price
+  // Form Data
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    model: "",
+    issue: "",
+  });
 
-  const handleBooking = async () => {
-    if (!name || !phone) {
-      toast.error("Please fill in all details!");
+  // Handle Typing
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  // The Submission Logic
+  const handleSubmit = async () => {
+    // 1. VALIDATION CHECKS
+    if (!formData.name || !formData.phone || !formData.model || !formData.issue) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    if (formData.phone.length < 10) {
+      toast.error("Please enter a valid 10-digit phone number");
       return;
     }
 
     setLoading(true);
 
-    // 1. Send data to Supabase
-    const { error } = await supabase
-      .from('bookings')
-      .insert([
-        { 
-          customer_name: name, 
-          phone_number: phone, 
-          device_model: model,
-          issue_type: issue,
-          estimated_price: price,
-          status: 'pending'
-        },
-      ]);
+    // 2. SEND TO SUPABASE
+    const { error } = await supabase.from("bookings").insert({
+      customer_name: formData.name,
+      phone_number: formData.phone,
+      device_model: `${selectedBrand} - ${formData.model}`,
+      issue_type: formData.issue,
+      estimated_price: "₹1,999", // Default estimate
+      status: "pending",
+    });
 
     setLoading(false);
 
     if (error) {
       console.error(error);
-      toast.error("Booking Failed. Please try again.");
+      toast.error("Booking Failed. Try again.");
     } else {
-      // 2. Success! Close and notify
-      setIsOpen(false);
-      toast.success("Booking Request Sent!", {
-        description: `We will call ${name} shortly.`,
-        duration: 5000,
-        style: { background: "#10B981", color: "white", border: "none" }
-      });
-      // Clear form
-      setName("");
-      setPhone("");
+      setSuccess(true);
+      toast.success("Repair Booked Successfully!");
+      // Reset form
+      setFormData({ name: "", phone: "", model: "", issue: "" });
     }
   };
 
-  return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button variant="outline" className="w-full mt-4 border-blue-200 text-blue-700 hover:bg-blue-50">
-          Book Repair
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="bottom" className="h-[90vh] sm:h-auto rounded-t-3xl">
-        <SheetHeader>
-          <SheetTitle className="text-2xl font-bold text-blue-900">
-            Repair {model}
-          </SheetTitle>
-          <SheetDescription>
-            Select your issue to see the estimated price.
-          </SheetDescription>
-        </SheetHeader>
-
-        <div className="grid gap-4 py-4">
-          {/* Issue Selection */}
-          <div className="grid grid-cols-2 gap-3">
-            <div 
-              onClick={() => { setIssue("Broken Screen"); setPrice("₹2,499"); }}
-              className={`border p-4 rounded-lg text-center cursor-pointer hover:border-blue-600 ${issue === "Broken Screen" ? "bg-blue-50 border-blue-600" : "bg-slate-50"}`}
-            >
-              <div className="font-semibold">Broken Screen</div>
-              <div className="text-green-600 font-bold">₹2,499</div>
-            </div>
-            <div 
-              onClick={() => { setIssue("Battery Issue"); setPrice("₹1,299"); }}
-              className={`border p-4 rounded-lg text-center cursor-pointer hover:border-blue-600 ${issue === "Battery Issue" ? "bg-blue-50 border-blue-600" : "bg-slate-50"}`}
-            >
-              <div className="font-semibold">Battery Issue</div>
-              <div className="text-green-600 font-bold">₹1,299</div>
-            </div>
-          </div>
-
-          <div className="space-y-2 mt-4">
-            <Label htmlFor="name">Your Name</Label>
-            <Input 
-              id="name" 
-              placeholder="Enter your name" 
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
-            <Input 
-              id="phone" 
-              placeholder="98765 43210" 
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </div>
-
-          <Button 
-            onClick={handleBooking}
-            disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-700 text-lg py-6 mt-4"
-          >
-            {loading ? "Booking..." : "Confirm Booking"}
-          </Button>
+  // 3. SUCCESS VIEW (The "Receipt")
+  if (success) {
+    return (
+      <div className="bg-green-50 p-8 rounded-xl border border-green-200 text-center animate-in fade-in zoom-in">
+        <div className="flex justify-center mb-4">
+          <CheckCircle2 className="h-16 w-16 text-green-600" />
         </div>
-      </SheetContent>
-    </Sheet>
+        <h3 className="text-2xl font-bold text-green-800 mb-2">Booking Confirmed!</h3>
+        <p className="text-green-700 mb-6">
+          We have received your request. Our technician will call you at <span className="font-bold">{formData.phone}</span> shortly.
+        </p>
+        <Button 
+          onClick={() => setSuccess(false)} 
+          className="bg-green-600 hover:bg-green-700 text-white"
+        >
+          Book Another Device
+        </Button>
+      </div>
+    );
+  }
+
+  // 4. THE FORM VIEW
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-sm border space-y-4">
+      <h3 className="text-xl font-semibold text-slate-800 mb-4">
+        Book {selectedBrand} Repair
+      </h3>
+
+      <div className="grid gap-2">
+        <Label htmlFor="name">Full Name</Label>
+        <Input 
+          id="name" 
+          placeholder="Enter your name" 
+          value={formData.name}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="phone">Phone Number</Label>
+        <Input 
+          id="phone" 
+          type="tel" 
+          placeholder="10-digit mobile number" 
+          maxLength={10}
+          value={formData.phone}
+          onChange={(e) => {
+            // Only allow numbers
+            const val = e.target.value.replace(/\D/g, '');
+            setFormData({ ...formData, phone: val });
+          }}
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="model">Device Model</Label>
+        <Input 
+          id="model" 
+          placeholder="e.g. iPhone 13, Galaxy S21" 
+          value={formData.model}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="issue">Issue Description</Label>
+        <Textarea 
+          id="issue" 
+          placeholder="What's wrong? (Screen broken, battery draining...)" 
+          value={formData.issue}
+          onChange={handleChange}
+        />
+      </div>
+
+      <Button 
+        onClick={handleSubmit} 
+        disabled={loading}
+        className="w-full bg-blue-900 hover:bg-blue-800 h-12 text-lg"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Booking...
+          </>
+        ) : (
+          "Confirm Booking"
+        )}
+      </Button>
+    </div>
   );
 }
