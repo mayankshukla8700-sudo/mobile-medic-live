@@ -33,7 +33,7 @@ export default async function ModelPage({
               </span>
               
               {/* This is the new "Book Repair" drawer */}
-              <RepairForm model={`${brandName} ${model}`} />
+              <RepairForm selectedBrand={brandName} />
             </div>
           ))}
         </div>
