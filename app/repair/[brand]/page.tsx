@@ -1,43 +1,60 @@
-import Navbar from "../../components/Navbar";
+"use client";
+
 import RepairForm from "../../components/RepairForm";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
-export default async function ModelPage({ 
-  params 
-}: { 
-  params: Promise<{ brand: string }> 
-}) {
-  const resolvedParams = await params;
-  const brandName = decodeURIComponent(resolvedParams.brand);
+// Placeholder models (We can connect this to a real database later!)
+const models = [
+  "Standard Model",
+  "Pro Model",
+  "Pro Max / Ultra",
+  "Plus Model",
+  "Fold / Flip",
+  "Older Version"
+];
 
-  const models = [
-    "Model X", "Model Y", "Pro Max", "Ultra 5G", "Lite Version"
-  ];
+export default function BrandPage({ params }: { params: { brand: string } }) {
+  const brandName = decodeURIComponent(params.brand);
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <Navbar />
+    <div className="max-w-md mx-auto p-6 pb-20">
+      <h1 className="text-2xl font-bold mb-6 text-slate-800">
+        Select {brandName} Model
+      </h1>
       
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold text-slate-900 mb-2">
-          Select Your {brandName} Model
-        </h1>
-        <p className="text-slate-600 mb-8">
-          We repair all major {brandName} devices.
-        </p>
+      <p className="text-slate-500 mb-6">
+        Choose your device model to get started.
+      </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {models.map((model) => (
-            <div key={model} className="bg-white p-6 rounded-lg shadow-sm border flex flex-col justify-between">
-              <span className="font-medium text-slate-700 text-lg mb-2">
-                {brandName} {model}
-              </span>
+      <div className="grid gap-4">
+        {models.map((model) => (
+          <Sheet key={model}>
+            <SheetTrigger asChild>
+              {/* THIS is what the user sees first: A clean, simple button */}
+              <div className="p-5 border rounded-xl bg-white shadow-sm hover:shadow-md hover:border-blue-500 cursor-pointer transition-all flex justify-between items-center group">
+                <div>
+                    <h3 className="font-semibold text-lg text-slate-800">{brandName} {model}</h3>
+                    <p className="text-slate-400 text-sm">Tap to Book Repair</p>
+                </div>
+                <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    &rarr;
+                </div>
+              </div>
+            </SheetTrigger>
+
+            {/* This is the Hidden Drawer that slides up */}
+            <SheetContent side="bottom" className="h-[85vh] rounded-t-[20px] overflow-y-auto">
+              <SheetHeader className="mb-6">
+                <SheetTitle className="text-center text-xl">Book {brandName} Repair</SheetTitle>
+              </SheetHeader>
               
-              {/* This is the new "Book Repair" drawer */}
+              {/* The Form lives safely inside here */}
               <RepairForm selectedBrand={brandName} />
-            </div>
-          ))}
-        </div>
+              
+            </SheetContent>
+          </Sheet>
+        ))}
       </div>
-    </main>
+    </div>
   );
 }
