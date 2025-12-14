@@ -164,19 +164,29 @@ export default function BrandPage() {
                     }}
                     className="group relative flex flex-col items-center justify-between p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all active:scale-95 h-48 overflow-hidden"
                   >
-                    {/* IMAGE CONTAINER */}
+                    {/* IMAGE CONTAINER WITH SMART FALLBACK */}
                     <div className="w-full h-28 relative flex flex-col items-center justify-center mb-2">
+                       {/* 1. Try Lowercase Name (Standard) */}
                        <img
                           src={`/models/${brandSlug}/${toSlug(model)}.jpg`}
                           alt={model}
                           className="object-contain max-h-full max-w-full group-hover:scale-110 transition-transform duration-300"
                           onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                            // If lowercase fails, try the Original Name (Backup for Windows issues)
+                            const target = e.currentTarget;
+                            if (!target.dataset.triedOriginal) {
+                                target.dataset.triedOriginal = "true";
+                                // Try loading "OnePlus-11R.jpg" instead of "oneplus-11r.jpg"
+                                target.src = `/models/${brandSlug}/${model.replace(/ /g, '-')}.jpg`;
+                            } else {
+                                // If BOTH fail, hide image and show icon
+                                target.style.display = 'none';
+                                target.nextElementSibling?.classList.remove('hidden');
+                            }
                           }}
                        />
                        
-                       {/* Fallback Icon (Hidden by default) */}
+                       {/* 2. Fallback Icon */}
                        <div className="hidden absolute inset-0 flex items-center justify-center">
                           <Smartphone className="w-12 h-12 text-slate-200 group-hover:text-blue-500 transition-colors" />
                        </div>

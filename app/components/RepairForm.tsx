@@ -16,20 +16,20 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Form States
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   
-  // Date Logic
-  const [dateType, setDateType] = useState("Today"); // 'Today', 'Tomorrow', or 'Custom'
+  const [dateType, setDateType] = useState("Today");
   const [customDate, setCustomDate] = useState("");
+
+  // GET TODAY'S DATE (For blocking past dates)
+  const today = new Date().toISOString().split("T")[0];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    // 1. Validation
     if (!name || !phone || !address) {
       toast.error("Please fill in all details");
       setLoading(false);
@@ -42,7 +42,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
       return;
     }
 
-    // Determine Final Date string
+    // Date Validation
     let finalDate = dateType;
     if (dateType === 'Custom') {
         if (!customDate) {
@@ -50,15 +50,9 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
             setLoading(false);
             return;
         }
-        finalDate = new Date(customDate).toDateString(); // Formats nicely like "Mon Jan 01 2024"
+        finalDate = new Date(customDate).toDateString();
     }
 
-    // 2. Prepare Data
-    const finalDeviceName = selectedModel 
-        ? `${selectedBrand} - ${selectedModel}` 
-        : selectedBrand;
-
-    // 3. Send to Database
     try {
       const { error } = await supabase
         .from('bookings')
@@ -66,12 +60,11 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
           {
             customer_name: name,
             phone_number: phone,
-            // Saving address and date in description for simplicity
             issue_description: `${selectedIssue} (Address: ${address})`,
-            device_model: finalDeviceName,
+            device_model: `${selectedBrand} - ${selectedModel}`,
             estimated_cost: estimatedPrice || 0,
             status: 'Pending',
-            scheduled_date: finalDate // Requires a 'scheduled_date' column, or will be ignored if column missing (safe)
+            scheduled_date: finalDate
           }
         ]);
 
@@ -88,7 +81,6 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
     }
   };
 
-  // SUCCESS CARD
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center animate-in zoom-in-95 duration-300">
@@ -96,20 +88,15 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
           <CheckCircle className="w-8 h-8 text-green-600" />
         </div>
         <h3 className="text-xl font-bold text-slate-900">Booking Confirmed!</h3>
-        <div className="bg-slate-50 p-4 rounded-xl mt-4 w-full border border-slate-100 text-left space-y-2">
-            <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Device:</span>
-                <span className="font-semibold text-slate-800">{selectedModel}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Date:</span>
-                <span className="font-semibold text-blue-600">
-                    {dateType === 'Custom' && customDate ? new Date(customDate).toLocaleDateString() : dateType}
-                </span>
-            </div>
+        <p className="text-slate-500 mt-2 max-w-xs mx-auto text-sm">
+          We have received your request for <strong>{selectedModel}</strong>.
+        </p>
+        <div className="bg-slate-50 p-3 rounded-lg mt-4 w-full border border-slate-100">
+            <p className="text-xs text-slate-400 uppercase font-bold mb-1">Schedule</p>
+            <p className="text-sm font-bold text-blue-600">
+                {dateType === 'Custom' && customDate ? new Date(customDate).toDateString() : dateType}
+            </p>
         </div>
-        <p className="text-sm text-slate-400 mt-4">We will call you shortly at <span className="font-bold text-slate-600">{phone}</span></p>
-        
         <button 
           onClick={() => window.location.reload()}
           className="mt-6 text-blue-600 font-semibold text-sm hover:underline"
@@ -120,18 +107,16 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
     );
   }
 
-  // THE BOOKING FORM
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       
-      {/* 1. Date Selection (Smart Buttons + Calendar) */}
+      {/* 1. Date Selection */}
       <div className="space-y-2">
         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
             <CalendarIcon className="w-3 h-3" /> Schedule Repair
         </label>
         
         <div className="grid grid-cols-3 gap-2">
-          {/* Preset Buttons */}
           {['Today', 'Tomorrow'].map((d) => (
             <button
               key={d}
@@ -139,15 +124,14 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
               onClick={() => { setDateType(d); setCustomDate(""); }}
               className={`py-2.5 px-2 text-xs font-bold rounded-lg border transition-all ${
                 dateType === d 
-                  ? "bg-slate-900 text-white border-slate-900 shadow-md" 
-                  : "bg-white text-slate-500 border-slate-200 hover:border-blue-300"
+                  ? "bg-slate-900 text-white border-slate-900 shadow-md transform scale-105" 
+                  : "bg-white text-slate-500 border-slate-200 hover:border-blue-300 hover:bg-blue-50"
               }`}
             >
               {d}
             </button>
           ))}
 
-          {/* Calendar Trigger */}
           <button
             type="button"
             onClick={() => setDateType('Custom')}
@@ -161,21 +145,26 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
           </button>
         </div>
 
-        {/* HIDDEN CALENDAR: Only appears when "Pick Date" is clicked */}
+        {/* CUSTOM CALENDAR INPUT */}
         {dateType === 'Custom' && (
-            <div className="animate-in slide-in-from-top-2 duration-200">
-                <input 
-                    type="date" 
-                    value={customDate}
-                    onChange={(e) => setCustomDate(e.target.value)}
-                    min={new Date().toISOString().split("T")[0]} // Disable past dates
-                    className="w-full p-3 border border-blue-200 rounded-lg bg-blue-50 text-slate-700 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+            <div className="animate-in slide-in-from-top-2 duration-200 pt-1">
+                <div className="relative">
+                    <input 
+                        type="date" 
+                        value={customDate}
+                        onChange={(e) => setCustomDate(e.target.value)}
+                        min={today} // BLOCK PAST DATES HERE
+                        className="w-full p-3 pl-4 border-2 border-blue-100 rounded-xl bg-white text-slate-800 text-sm font-bold shadow-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 cursor-pointer"
+                    />
+                </div>
+                <p className="text-[10px] text-slate-400 mt-1 pl-1">
+                    *Tap to open calendar
+                </p>
             </div>
         )}
       </div>
 
-      {/* 2. Personal Details Inputs */}
+      {/* 2. Personal Details */}
       <div className="space-y-3">
         <div className="relative group">
           <User className="absolute left-3 top-3 w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
@@ -219,16 +208,16 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-blue-500/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-slate-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {loading ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              Confirming...
+              Scheduling...
             </>
           ) : (
             <>
-              Book Repair
+              Confirm Booking
               <span className="bg-white/20 px-2 py-0.5 rounded text-xs ml-1 font-medium">
                  ₹{estimatedPrice || 0}
               </span>
