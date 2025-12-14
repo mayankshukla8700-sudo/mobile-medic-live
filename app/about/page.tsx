@@ -11,7 +11,7 @@ export default function AboutPage() {
             We Are <span className="text-blue-500">The Mobile Medic</span>
           </h1>
           <p className="text-lg text-slate-300 leading-relaxed">
-            We know you are busy. That is why we don't ask you to travel.
+            We know you are busy. That is why we come to you.
             <br />
             We pick up your phone, fix it with <span className="text-white font-semibold">expert care</span>, and deliver it back to you the 
             <span className="text-blue-400 font-bold"> very same day</span>.
@@ -70,7 +70,7 @@ export default function AboutPage() {
                 <div>
                   <h4 className="font-semibold text-slate-900">Phone</h4>
                   <p className="text-slate-600">+91 8920766791</p>
-                  <p className="text-xs text-slate-400">Mon - Sat (10 AM - 8 PM)</p>
+                  <p className="text-xs text-slate-400">Mon - Sun (10 AM - 8 PM)</p>
                 </div>
               </div>
 
