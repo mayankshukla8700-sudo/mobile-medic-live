@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-// The full list of brands from your screenshot
+// Full Brand List
 const brands = [
   { name: "Apple", slug: "apple", logo: "/brands/apple.png" },
   { name: "Samsung", slug: "samsung", logo: "/brands/samsung.png" },
@@ -36,7 +36,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Brand Grid */}
+        {/* Brand Grid - NO GRAYSCALE */}
         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {brands.map((brand) => (
             <Link 
@@ -44,7 +44,7 @@ export default function Home() {
               href={`/repair/${brand.slug}`}
               className="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-blue-500/30 transition-all duration-300 flex flex-col items-center justify-center gap-3 aspect-square"
             >
-              <div className="relative w-12 h-12 opacity-80 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0">
+              <div className="relative w-12 h-12 opacity-100 group-hover:scale-110 transition-transform">
                 <Image 
                   src={brand.logo} 
                   alt={brand.name} 

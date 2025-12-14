@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-// FIXED: Import the tool directly, not the function
+// THIS IS THE KEY: We import 'supabase' from the file you made in Step 2
 import { supabase } from "@/lib/supabase"; 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+// These icons work after you run the install command in Step 1
 import { Loader2, CheckCircle2 } from "lucide-react"; 
 
 interface RepairFormProps {
@@ -38,9 +39,6 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
     setLoading(true);
 
     try {
-      // NOTE: We don't need 'const supabase = createClient()' anymore.
-      // We already imported 'supabase' at the top.
-      
       const finalDeviceName = selectedModel 
         ? `${selectedBrand} - ${selectedModel}` 
         : selectedBrand;
