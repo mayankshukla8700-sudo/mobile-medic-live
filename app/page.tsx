@@ -3,25 +3,94 @@
 import Link from "next/link";
 import { ShieldCheck, Clock, MapPin, Star, Smartphone, ChevronRight } from "lucide-react";
 
-// 1. BRAND DATA WITH LOGOS (Auto-fetched from CDN)
-// We use standard <img> tags to avoid complex Next.js config changes
+// 1. BRAND DATA WITH MANUAL FIXES FOR BROKEN LOGOS
 const brands = [
-  { name: "Apple", id: "apple", color: "#000000", logo: "https://cdn.simpleicons.org/apple/000000" },
-  { name: "Samsung", id: "samsung", color: "#1428A0", logo: "https://cdn.simpleicons.org/samsung/1428A0" },
-  { name: "Xiaomi", id: "xiaomi", color: "#FF6900", logo: "https://cdn.simpleicons.org/xiaomi/FF6900" },
-  { name: "Vivo", id: "vivo", color: "#415FFF", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Vivo_mobile_logo.png" }, // Custom URL for Vivo
-  { name: "Oppo", id: "oppo", color: "#115D4E", logo: "https://cdn.simpleicons.org/oppo/115D4E" },
-  { name: "Realme", id: "realme", color: "#FFC915", logo: "https://upload.wikimedia.org/wikipedia/commons/1/13/Realme_logo.png" }, // Custom URL for Realme
-  { name: "OnePlus", id: "oneplus", color: "#F50514", logo: "https://cdn.simpleicons.org/oneplus/F50514" },
-  { name: "Google", id: "google", color: "#4285F4", logo: "https://cdn.simpleicons.org/google/4285F4" },
-  { name: "Poco", id: "poco", color: "#FFD400", logo: "https://upload.wikimedia.org/wikipedia/commons/b/b8/POCO_Logo.svg" },
-  { name: "Motorola", id: "motorola", color: "#001489", logo: "https://cdn.simpleicons.org/motorola/001489" },
-  { name: "Asus", id: "asus", color: "#00539B", logo: "https://cdn.simpleicons.org/asus/00539B" },
-  { name: "Nothing", id: "nothing", color: "#000000", logo: "https://cdn.simpleicons.org/nothing/000000" },
-  { name: "Infinix", id: "infinix", color: "#000000", logo: "" }, // No generic logo, text fallback
-  { name: "Honor", id: "honor", color: "#000000", logo: "https://cdn.simpleicons.org/honor/000000" },
-  { name: "Nokia", id: "nokia", color: "#124191", logo: "https://cdn.simpleicons.org/nokia/124191" },
-  { name: "iQOO", id: "iqoo", color: "#000000", logo: "" } // Text fallback
+  { 
+    name: "Apple", 
+    id: "apple", 
+    logo: "https://cdn.simpleicons.org/apple/000000" 
+  },
+  { 
+    name: "Samsung", 
+    id: "samsung", 
+    logo: "https://cdn.simpleicons.org/samsung/1428A0" 
+  },
+  { 
+    name: "Xiaomi", 
+    id: "xiaomi", 
+    logo: "https://cdn.simpleicons.org/xiaomi/FF6900" 
+  },
+  { 
+    name: "Vivo", 
+    id: "vivo", 
+    // FIXED: Direct PNG link
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Vivo_mobile_logo.png/2560px-Vivo_mobile_logo.png" 
+  },
+  { 
+    name: "Oppo", 
+    id: "oppo", 
+    logo: "https://cdn.simpleicons.org/oppo/115D4E" 
+  },
+  { 
+    name: "Realme", 
+    id: "realme", 
+    // FIXED: Direct PNG link
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Realme_logo.png/1200px-Realme_logo.png" 
+  },
+  { 
+    name: "OnePlus", 
+    id: "oneplus", 
+    logo: "https://cdn.simpleicons.org/oneplus/F50514" 
+  },
+  { 
+    name: "Google", 
+    id: "google", 
+    logo: "https://cdn.simpleicons.org/google/4285F4" 
+  },
+  { 
+    name: "Poco", 
+    id: "poco", 
+    // FIXED: Direct PNG link (Yellow/Black)
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/POCO_Logo.svg/2560px-POCO_Logo.svg.png" 
+  },
+  { 
+    name: "iQOO", 
+    id: "iqoo", 
+    // FIXED: Direct PNG link
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/IQOO_logo.png/1200px-IQOO_logo.png" 
+  },
+  { 
+    name: "Motorola", 
+    id: "motorola", 
+    logo: "https://cdn.simpleicons.org/motorola/001489" 
+  },
+  { 
+    name: "Infinix", 
+    id: "infinix", 
+    // FIXED: Direct PNG link
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Infinix_Mobility_logo.png/2560px-Infinix_Mobility_logo.png" 
+  },
+  { 
+    name: "Honor", 
+    id: "honor", 
+    logo: "https://cdn.simpleicons.org/honor/000000" 
+  },
+  { 
+    name: "Nokia", 
+    id: "nokia", 
+    logo: "https://cdn.simpleicons.org/nokia/124191" 
+  },
+  { 
+    name: "Asus", 
+    id: "asus", 
+    logo: "https://cdn.simpleicons.org/asus/00539B" 
+  },
+  { 
+    name: "Nothing", 
+    id: "nothing", 
+    // FIXED: Direct PNG link (Black Text)
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Nothing_%28technology_company%29_Logo.svg/1200px-Nothing_%28technology_company%29_Logo.svg.png" 
+  },
 ];
 
 export default function Home() {
@@ -44,7 +113,7 @@ export default function Home() {
             <span className="text-blue-400">We Fix It Fast.</span>
           </h1>
 
-          {/* Subheadline (UPDATED) */}
+          {/* Subheadline */}
           <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
             Premium OLED & Advance repair at your doorstep. <br className="hidden md:block" />
             Save up to 40% compared to service centers.
@@ -69,7 +138,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- BRAND GRID (With Real Logos) --- */}
+      {/* --- BRAND GRID (Fixed Logos) --- */}
       <div className="max-w-5xl mx-auto px-4 -mt-10 relative z-10">
         <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
           
@@ -85,21 +154,14 @@ export default function Home() {
                 href={`/repair/${brand.id}`}
                 className="group flex flex-col items-center justify-center p-6 rounded-xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer h-32"
               >
-                {/* LOGO IMAGE (If available) */}
-                {brand.logo ? (
-                  <div className="h-10 w-full flex items-center justify-center mb-3">
-                    <img 
-                      src={brand.logo} 
-                      alt={brand.name} 
-                      className="h-full max-w-[80%] object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all"
-                    />
-                  </div>
-                ) : (
-                  // Fallback for brands without simple logos
-                  <div className="h-10 w-full flex items-center justify-center mb-3">
-                    <Smartphone className="h-8 w-8 text-slate-300 group-hover:text-blue-500" />
-                  </div>
-                )}
+                {/* LOGO IMAGE */}
+                <div className="h-10 w-full flex items-center justify-center mb-3">
+                  <img 
+                    src={brand.logo} 
+                    alt={brand.name} 
+                    className="h-full max-w-[80%] object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all"
+                  />
+                </div>
                 
                 {/* Brand Name */}
                 <span className="text-sm font-bold text-slate-700 group-hover:text-blue-700 transition-colors">
