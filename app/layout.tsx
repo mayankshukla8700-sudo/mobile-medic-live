@@ -5,14 +5,36 @@ import Image from "next/image";
 import Link from "next/link";
 import { Toaster } from "sonner"; 
 import { Phone } from "lucide-react"; 
+import Footer from "./components/Footer"; 
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "The Mobile Medic | Expert Phone Repairs",
-  description: "OLED and Advance repair for iPhone, Samsung, and more.",
+  title: "The Mobile Medic | Rated #1 Doorstep Repair",
+  description: "Instant price quotes for iPhone, Samsung, & OnePlus. Expert technicians come to your home. 6 Months Warranty.",
+  
+  // CRITICAL: This allows WhatsApp to find the image. 
+  // Make sure this matches your ACTUAL live Vercel link!
+  metadataBase: new URL('https://mobile-medic-live.vercel.app'), 
+  
   icons: {
     icon: "/logo.png", 
+  },
+  
+  // This tells WhatsApp to use the big card
+  openGraph: {
+    title: "The Mobile Medic | We Fix It Fast",
+    description: "Broken Phone? Get it fixed at your doorstep in 30 mins.",
+    images: [
+      {
+        url: '/opengraph-image.png', // It looks for the file you put in the 'app' folder
+        width: 1200,
+        height: 630,
+        alt: 'The Mobile Medic Repair Service',
+      },
+    ],
+    locale: 'en_IN',
+    type: 'website',
   },
 };
 
@@ -23,15 +45,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-slate-50`}>
+      <body className={`${inter.className} bg-slate-50 flex flex-col min-h-screen`}>
         
-        {/* --- HEADER: Cashify Style Layout + Your Blue Brand --- */}
+        {/* --- HEADER --- */}
         <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white shadow-sm">
           <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
             
             {/* LEFT: Logo & Name */}
             <Link href="/" className="flex items-center gap-3 group">
-              {/* Logo with slight zoom (scale-110) to fill the box */}
               <div className="relative w-14 h-14 md:w-16 md:h-16 flex-shrink-0">
                 <Image 
                   src="/logo.png" 
@@ -40,8 +61,6 @@ export default function RootLayout({
                   className="object-contain scale-110 group-hover:scale-125 transition-transform duration-300" 
                 />
               </div>
-              
-              {/* Text */}
               <div className="flex flex-col justify-center -space-y-1">
                 <span className="font-extrabold text-2xl md:text-3xl text-slate-900 tracking-tight">
                   The Mobile Medic
@@ -52,7 +71,7 @@ export default function RootLayout({
               </div>
             </Link>
 
-            {/* RIGHT: BLUE Call Button with Correct Number */}
+            {/* RIGHT: Call Button */}
             <div className="flex items-center gap-6">
                <a 
                 href="tel:+918920766791" 
@@ -61,18 +80,21 @@ export default function RootLayout({
                 <Phone className="w-4 h-4 text-white fill-current" />
                 <span className="text-base tracking-wide">+91 8920766791</span>
               </a>
-
-              {/* Mobile Icon */}
               <a href="tel:+918920766791" className="md:hidden bg-blue-600 text-white p-2.5 rounded-lg shadow-sm">
                  <Phone className="w-5 h-5" />
               </a>
             </div>
-
           </div>
         </nav>
-        {/* ------------------------------------------- */}
 
-        {children}
+        {/* --- MAIN CONTENT --- */}
+        <div className="flex-grow">
+            {children}
+        </div>
+
+        {/* --- FOOTER --- */}
+        <Footer />
+        
         <Toaster />
       </body>
     </html>
