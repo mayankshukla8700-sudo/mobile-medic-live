@@ -25,55 +25,59 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} bg-slate-50`}>
         
-        {/* --- NAVBAR --- */}
+        {/* --- CASHIFY STYLE HEADER: Compact & Wide --- */}
         <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white shadow-sm">
-          {/* Increased Header Height to h-24 (96px) to fit the big logo */}
-          <div className="max-w-6xl mx-auto px-4 h-24 flex items-center justify-between">
+          {/* 1. Use 'max-w-7xl' for that wide, professional spread */}
+          {/* 2. Height 'h-20' (80px) is the industry standard for this look */}
+          <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
             
-            {/* LEFT: DOMINANT LOGO & Name */}
-            <Link href="/" className="flex items-center gap-4 hover:opacity-90 transition-opacity">
+            {/* LEFT: TIGHT BRAND LOCKUP */}
+            <Link href="/" className="flex items-center gap-3 group">
               
-              {/* FIX: LOGO SIZE 25 (Approx w-24/w-28) */}
-              {/* This makes the logo much larger than the text height */}
-              <div className="relative w-24 h-24">
+              {/* LOGO: Fixed 60px size (w-16) */}
+              {/* TRICK: 'scale-110' zooms it slightly to hide padding borders */}
+              <div className="relative w-14 h-14 md:w-16 md:h-16 flex-shrink-0">
                 <Image 
                   src="/logo.png" 
                   alt="The Mobile Medic Logo" 
                   fill
-                  className="object-contain py-2" // py-2 adds a tiny breathing room so it doesn't touch edges
+                  className="object-contain scale-110 group-hover:scale-125 transition-transform duration-300" 
                 />
               </div>
               
-              {/* Name Size Remains Same (text-3xl) */}
-              <div className="flex flex-col justify-center">
-                <span className="font-extrabold text-2xl md:text-3xl text-slate-900 leading-none tracking-tight">
+              {/* TEXT: Left aligned, tight leading */}
+              <div className="flex flex-col justify-center -space-y-1">
+                <span className="font-extrabold text-2xl md:text-3xl text-slate-900 tracking-tight">
                   The Mobile Medic
                 </span>
-                <span className="text-[10px] md:text-xs font-bold text-blue-600 tracking-wider uppercase mt-1">
+                <span className="text-[10px] md:text-xs font-bold text-blue-600 tracking-wider uppercase pl-0.5">
                   OLED & Advance Repair
                 </span>
               </div>
             </Link>
 
-            {/* RIGHT: Call Button */}
-            <div className="hidden md:flex items-center gap-6">
+            {/* RIGHT: COMPACT ACTION BUTTON */}
+            {/* Matches the 'Login' button size from Cashify, but for Calls */}
+            <div className="flex items-center gap-6">
                <a 
                 href="tel:+919999999999" 
-                className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-full font-bold shadow-md hover:bg-blue-700 transition-all hover:scale-105"
+                className="hidden md:flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-sm transition-all active:scale-95"
               >
-                <Phone className="w-5 h-5 text-white fill-current" />
-                <span className="text-lg">+91 9999999999</span>
+                {/* Note: Cashify uses that specific Teal color. I used teal-500 here. 
+                    Change back to 'bg-blue-600' if you prefer your blue brand. */}
+                <Phone className="w-4 h-4 text-white fill-current" />
+                <span className="text-base tracking-wide">+91 9999999999</span>
+              </a>
+
+              {/* Mobile Icon */}
+              <a href="tel:+919999999999" className="md:hidden bg-teal-500 text-white p-2.5 rounded-lg shadow-sm">
+                 <Phone className="w-5 h-5" />
               </a>
             </div>
-            
-            {/* Mobile-only Icon */}
-            <a href="tel:+919999999999" className="md:hidden bg-blue-600 text-white p-2.5 rounded-full shadow-lg flex items-center justify-center">
-               <Phone className="w-5 h-5 text-white fill-current" />
-            </a>
 
           </div>
         </nav>
-        {/* -------------- */}
+        {/* ------------------------------------------- */}
 
         {children}
         <Toaster />
