@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ShieldCheck, Clock, MapPin, Star, Smartphone, ChevronRight } from "lucide-react";
 
-// 1. BRAND DATA WITH MANUAL FIXES FOR BROKEN LOGOS
+// 1. BRAND DATA (Using Clearbit API for missing logos - No download needed)
 const brands = [
   { 
     name: "Apple", 
@@ -23,8 +23,8 @@ const brands = [
   { 
     name: "Vivo", 
     id: "vivo", 
-    // FIXED: Direct PNG link
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Vivo_mobile_logo.png/2560px-Vivo_mobile_logo.png" 
+    // Magic Link: Pulls from vivo.com
+    logo: "https://logo.clearbit.com/vivo.com" 
   },
   { 
     name: "Oppo", 
@@ -34,8 +34,8 @@ const brands = [
   { 
     name: "Realme", 
     id: "realme", 
-    // FIXED: Direct PNG link
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Realme_logo.png/1200px-Realme_logo.png" 
+    // Magic Link: Pulls from realme.com
+    logo: "https://logo.clearbit.com/realme.com" 
   },
   { 
     name: "OnePlus", 
@@ -50,14 +50,14 @@ const brands = [
   { 
     name: "Poco", 
     id: "poco", 
-    // FIXED: Direct PNG link (Yellow/Black)
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/POCO_Logo.svg/2560px-POCO_Logo.svg.png" 
+    // Magic Link: Pulls from po.co (Official Poco site)
+    logo: "https://logo.clearbit.com/po.co" 
   },
   { 
     name: "iQOO", 
     id: "iqoo", 
-    // FIXED: Direct PNG link
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/IQOO_logo.png/1200px-IQOO_logo.png" 
+    // Magic Link: Pulls from iqoo.com
+    logo: "https://logo.clearbit.com/iqoo.com" 
   },
   { 
     name: "Motorola", 
@@ -67,8 +67,8 @@ const brands = [
   { 
     name: "Infinix", 
     id: "infinix", 
-    // FIXED: Direct PNG link
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Infinix_Mobility_logo.png/2560px-Infinix_Mobility_logo.png" 
+    // Magic Link: Pulls from infinixmobility.com
+    logo: "https://logo.clearbit.com/infinixmobility.com" 
   },
   { 
     name: "Honor", 
@@ -88,8 +88,8 @@ const brands = [
   { 
     name: "Nothing", 
     id: "nothing", 
-    // FIXED: Direct PNG link (Black Text)
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Nothing_%28technology_company%29_Logo.svg/1200px-Nothing_%28technology_company%29_Logo.svg.png" 
+    // Magic Link: Pulls from nothing.tech
+    logo: "https://logo.clearbit.com/nothing.tech" 
   },
 ];
 
@@ -138,7 +138,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- BRAND GRID (Fixed Logos) --- */}
+      {/* --- BRAND GRID --- */}
       <div className="max-w-5xl mx-auto px-4 -mt-10 relative z-10">
         <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
           
@@ -155,11 +155,11 @@ export default function Home() {
                 className="group flex flex-col items-center justify-center p-6 rounded-xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer h-32"
               >
                 {/* LOGO IMAGE */}
-                <div className="h-10 w-full flex items-center justify-center mb-3">
+                <div className="h-12 w-full flex items-center justify-center mb-3">
                   <img 
                     src={brand.logo} 
                     alt={brand.name} 
-                    className="h-full max-w-[80%] object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all"
+                    className="h-full max-w-[80%] object-contain opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all"
                   />
                 </div>
                 
