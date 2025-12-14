@@ -100,9 +100,8 @@ export default function BrandPage() {
 
   const brandSlug = typeof params.brand === 'string' ? params.brand.toLowerCase() : '';
   const brandName = brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
-  const allModels = brandData[brandSlug] || ["Model 1", "Model 2"];
+  const allModels = brandData[brandSlug] || ["Pro Model", "Standard Model"];
 
-  // Search Logic
   const [searchTerm, setSearchTerm] = useState("");
   const filteredModels = allModels.filter(model => 
     model.toLowerCase().includes(searchTerm.toLowerCase())
@@ -112,18 +111,14 @@ export default function BrandPage() {
   const [selectedIssue, setSelectedIssue] = useState("");
   const [estimatedPrice, setEstimatedPrice] = useState(0);
 
-  // Helper to convert "iPhone 15 Pro Max" -> "iphone-15-pro-max"
   const toSlug = (text: string) => {
-    return text
-      .toLowerCase()
-      .replace(/ /g, "-")       // Replace spaces with dashes
-      .replace(/[()]/g, "");    // Remove parentheses like (2022)
+    return text.toLowerCase().replace(/ /g, "-").replace(/[()]/g, "");
   };
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
       
-      {/* --- HEADER --- */}
+      {/* HEADER */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10 px-4 py-4 shadow-sm">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
@@ -145,7 +140,7 @@ export default function BrandPage() {
         </div>
       </div>
 
-      {/* --- MODEL GRID --- */}
+      {/* GRID */}
       <div className="max-w-6xl mx-auto p-4">
         {filteredModels.length === 0 ? (
           <div className="text-center py-10 text-slate-400">
@@ -164,40 +159,36 @@ export default function BrandPage() {
                     }}
                     className="group relative flex flex-col items-center justify-between p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all active:scale-95 h-48 overflow-hidden"
                   >
-                    {/* IMAGE CONTAINER WITH SMART FALLBACK */}
+                    {/* IMAGE CONTAINER WITH CACHE BUSTER */}
                     <div className="w-full h-28 relative flex flex-col items-center justify-center mb-2">
-                       {/* 1. Try Lowercase Name (Standard) */}
                        <img
-                          src={`/models/${brandSlug}/${toSlug(model)}.jpg`}
+                          /* The ?v=... forces a fresh load every time you open the page */
+                          src={`/models/${brandSlug}/${toSlug(model)}.jpg?v=${new Date().getTime()}`}
                           alt={model}
                           className="object-contain max-h-full max-w-full group-hover:scale-110 transition-transform duration-300"
                           onError={(e) => {
-                            // If lowercase fails, try the Original Name (Backup for Windows issues)
                             const target = e.currentTarget;
+                            // If lowercase fails, try swapping dashes for spaces (just in case)
                             if (!target.dataset.triedOriginal) {
                                 target.dataset.triedOriginal = "true";
-                                // Try loading "OnePlus-11R.jpg" instead of "oneplus-11r.jpg"
-                                target.src = `/models/${brandSlug}/${model.replace(/ /g, '-')}.jpg`;
+                                target.src = `/models/${brandSlug}/${model}.jpg`;
                             } else {
-                                // If BOTH fail, hide image and show icon
+                                // If ALL fail, show icon
                                 target.style.display = 'none';
                                 target.nextElementSibling?.classList.remove('hidden');
                             }
                           }}
                        />
                        
-                       {/* 2. Fallback Icon */}
                        <div className="hidden absolute inset-0 flex items-center justify-center">
                           <Smartphone className="w-12 h-12 text-slate-200 group-hover:text-blue-500 transition-colors" />
                        </div>
                     </div>
                     
-                    {/* MODEL NAME */}
                     <span className="text-sm font-bold text-slate-700 text-center leading-tight group-hover:text-blue-700 w-full">
                       {model}
                     </span>
                     
-                    {/* HOVER BADGE */}
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                         Book
