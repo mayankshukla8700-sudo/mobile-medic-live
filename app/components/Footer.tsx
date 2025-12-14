@@ -15,7 +15,7 @@ export default function Footer() {
               India's most trusted doorstep repair service. Premium parts, expert technicians, and 6 months warranty on all repairs.
             </p>
             <div className="flex gap-4 pt-2">
-              {/* Social Placeholders */}
+              {/* Social Placeholders - These don't go anywhere yet, visuals only */}
               <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer">
                 <Facebook className="w-4 h-4" />
               </div>
@@ -34,20 +34,21 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/" className="hover:text-blue-400 transition-colors">Home</Link></li>
               <li><Link href="/about" className="hover:text-blue-400 transition-colors">About Us</Link></li>
-              <li><Link href="/track-order" className="hover:text-blue-400 transition-colors">Track Order</Link></li>
+              {/* Redirect Track Order to Home for now until we build a tracker */}
+              <li><Link href="/" className="hover:text-blue-400 transition-colors">Track Order</Link></li>
               <li><Link href="/admin" className="hover:text-blue-400 transition-colors">Partner Login</Link></li>
             </ul>
           </div>
 
-          {/* COLUMN 3: Services */}
+          {/* COLUMN 3: Our Services (ALL Redirect to Home/Brand Selection) */}
           <div>
             <h4 className="text-white font-semibold mb-4">Our Services</h4>
             <ul className="space-y-2 text-sm">
-              <li className="hover:text-blue-400 cursor-pointer">Screen Replacement</li>
-              <li className="hover:text-blue-400 cursor-pointer">Battery Replacement</li>
-              <li className="hover:text-blue-400 cursor-pointer">Charging Jack Repair</li>
-              <li className="hover:text-blue-400 cursor-pointer">Mic & Speaker Fix</li>
-              <li className="hover:text-blue-400 cursor-pointer">FaceID Diagnostics</li>
+              <li><Link href="/" className="hover:text-blue-400 transition-colors">Screen Replacement</Link></li>
+              <li><Link href="/" className="hover:text-blue-400 transition-colors">Battery Replacement</Link></li>
+              <li><Link href="/" className="hover:text-blue-400 transition-colors">Charging Jack Repair</Link></li>
+              <li><Link href="/" className="hover:text-blue-400 transition-colors">Mic & Speaker Fix</Link></li>
+              <li><Link href="/" className="hover:text-blue-400 transition-colors">FaceID Diagnostics</Link></li>
             </ul>
           </div>
 
