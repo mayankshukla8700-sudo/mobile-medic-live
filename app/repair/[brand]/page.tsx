@@ -1,16 +1,13 @@
 "use client";
 
-import { useState } from "react";
-// GO UP 2 LEVELS to find RepairForm in 'app/components'
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation"; // <--- This hook fixes the crash!
+
 import RepairForm from "../../components/RepairForm"; 
-
-// GO UP 3 LEVELS to find the UI folder in the Root
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../../../components/ui/sheet";
-
-// Icons
 import { Smartphone, Battery, Zap, Volume2, Wifi } from "lucide-react";
 
-// 1. THE DATA
+// 1. DATA
 const brandData: Record<string, string[]> = {
   apple: ["iPhone 15 Pro Max", "iPhone 15", "iPhone 14 Pro", "iPhone 14", "iPhone 13", "iPhone 12", "iPhone 11", "iPhone X"],
   samsung: ["Galaxy S24 Ultra", "Galaxy S23", "Galaxy A54", "Galaxy M34", "Galaxy F14", "Note 20 Ultra"],
@@ -30,7 +27,6 @@ const brandData: Record<string, string[]> = {
   nothing: ["Nothing Phone (2)", "Nothing Phone (1)", "Nothing Phone (2a)"],
 };
 
-// 2. THE PRICES
 const repairTypes = [
   { id: "screen", label: "Screen Replacement", price: 2499, icon: Smartphone },
   { id: "battery", label: "Battery Replacement", price: 1299, icon: Battery },
@@ -39,9 +35,14 @@ const repairTypes = [
   { id: "sensor", label: "FaceID / Sensors", price: 1499, icon: Wifi },
 ];
 
-export default function BrandPage({ params }: { params: { brand: string } }) {
-  const brandSlug = params.brand.toLowerCase();
-  const brandName = decodeURIComponent(params.brand).toUpperCase();
+export default function BrandPage() {
+  const params = useParams(); // Using the hook to safely get the brand
+  
+  // Loading State
+  if (!params) return <div className="p-10 text-center">Loading...</div>;
+
+  const brandSlug = typeof params.brand === 'string' ? params.brand.toLowerCase() : '';
+  const brandName = typeof params.brand === 'string' ? decodeURIComponent(params.brand).toUpperCase() : '';
   
   const models = brandData[brandSlug] || ["Pro Model", "Standard Model"];
 
@@ -115,7 +116,6 @@ export default function BrandPage({ params }: { params: { brand: string } }) {
                       </div>
                     </div>
                     
-                    {/* Pass the data to the form */}
                     <RepairForm 
                       selectedBrand={brandName} 
                       selectedModel={model} 
