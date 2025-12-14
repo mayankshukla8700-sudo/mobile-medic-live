@@ -1,30 +1,96 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation"; // <--- This hook fixes the crash!
-
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import RepairForm from "../../components/RepairForm"; 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../../../components/ui/sheet";
-import { Smartphone, Battery, Zap, Volume2, Wifi } from "lucide-react";
+import { Smartphone, Battery, Zap, Volume2, Wifi, Search, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
-// 1. DATA
+// 1. MASSIVE MODEL DATABASE (Cashify Level)
 const brandData: Record<string, string[]> = {
-  apple: ["iPhone 15 Pro Max", "iPhone 15", "iPhone 14 Pro", "iPhone 14", "iPhone 13", "iPhone 12", "iPhone 11", "iPhone X"],
-  samsung: ["Galaxy S24 Ultra", "Galaxy S23", "Galaxy A54", "Galaxy M34", "Galaxy F14", "Note 20 Ultra"],
-  xiaomi: ["Redmi Note 13 Pro", "Redmi Note 12", "Xiaomi 14", "Xiaomi 13 Pro"],
-  vivo: ["Vivo X100", "Vivo V29", "Vivo T2 Pro", "Vivo Y200"],
-  oppo: ["Oppo Reno 11", "Oppo F25 Pro", "Oppo A78", "Oppo Find N3 Flip"],
-  realme: ["Realme 12 Pro+", "Realme 11x", "Realme Narzo 60", "Realme C67"],
-  oneplus: ["OnePlus 12", "OnePlus 11R", "OnePlus Nord CE 3", "OnePlus 10 Pro"],
-  google: ["Pixel 8 Pro", "Pixel 7a", "Pixel 7", "Pixel 6a"],
-  poco: ["Poco X6 Pro", "Poco M6 Pro", "Poco F5", "Poco C65"],
-  iqoo: ["iQOO 12", "iQOO Neo 9 Pro", "iQOO Z7 Pro", "iQOO 11"],
-  motorola: ["Moto Edge 40", "Moto G84", "Moto G54", "Razr 40 Ultra"],
-  infinix: ["Infinix Note 40", "Infinix Zero 30", "Infinix Hot 40", "Infinix GT 10 Pro"],
-  honor: ["Honor X9b", "Honor 90", "Honor Magic 6"],
-  nokia: ["Nokia G42", "Nokia C32", "Nokia X30"],
-  asus: ["ROG Phone 8", "ROG Phone 7", "Zenfone 10", "Zenfone 9"],
-  nothing: ["Nothing Phone (2)", "Nothing Phone (1)", "Nothing Phone (2a)"],
+  apple: [
+    "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
+    "iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14 Plus", "iPhone 14",
+    "iPhone 13 Pro Max", "iPhone 13 Pro", "iPhone 13", "iPhone 13 Mini",
+    "iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 12 Mini",
+    "iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11",
+    "iPhone XS Max", "iPhone XS", "iPhone XR", "iPhone X",
+    "iPhone 8 Plus", "iPhone 8", "iPhone 7 Plus", "iPhone 7",
+    "iPhone SE (2022)", "iPhone SE (2020)"
+  ],
+  samsung: [
+    "Galaxy S24 Ultra", "Galaxy S24 Plus", "Galaxy S24",
+    "Galaxy S23 Ultra", "Galaxy S23 Plus", "Galaxy S23", "Galaxy S23 FE",
+    "Galaxy S22 Ultra", "Galaxy S22 Plus", "Galaxy S22",
+    "Galaxy S21 Ultra", "Galaxy S21 Plus", "Galaxy S21", "Galaxy S21 FE",
+    "Galaxy Note 20 Ultra", "Galaxy Note 20", "Galaxy Note 10 Plus",
+    "Galaxy Z Fold 5", "Galaxy Z Flip 5", "Galaxy Z Fold 4", "Galaxy Z Flip 4",
+    "Galaxy A55", "Galaxy A54", "Galaxy A34", "Galaxy A24", "Galaxy A14",
+    "Galaxy M54", "Galaxy M34", "Galaxy M14", "Galaxy F54", "Galaxy F34"
+  ],
+  oneplus: [
+    "OnePlus 12", "OnePlus 12R",
+    "OnePlus 11", "OnePlus 11R",
+    "OnePlus 10 Pro", "OnePlus 10T", "OnePlus 10R",
+    "OnePlus 9 Pro", "OnePlus 9", "OnePlus 9RT", "OnePlus 9R",
+    "OnePlus 8 Pro", "OnePlus 8T", "OnePlus 8",
+    "OnePlus Nord 4", "OnePlus Nord 3", "OnePlus Nord CE 4", "OnePlus Nord CE 3",
+    "OnePlus Nord 2T", "OnePlus Nord CE 2"
+  ],
+  xiaomi: [
+    "Xiaomi 14 Ultra", "Xiaomi 14",
+    "Xiaomi 13 Pro", "Xiaomi 13",
+    "Xiaomi 12 Pro", "Xiaomi 12",
+    "Redmi Note 13 Pro+", "Redmi Note 13 Pro", "Redmi Note 13",
+    "Redmi Note 12 Pro+", "Redmi Note 12 Pro", "Redmi Note 12",
+    "Redmi 13C", "Redmi 12", "Redmi A3"
+  ],
+  vivo: [
+    "Vivo X100 Pro", "Vivo X100", "Vivo X90 Pro", "Vivo X90",
+    "Vivo V30 Pro", "Vivo V30", "Vivo V29 Pro", "Vivo V29", "Vivo V27",
+    "Vivo T3", "Vivo T2 Pro", "Vivo T2", "Vivo T2x",
+    "Vivo Y200e", "Vivo Y200", "Vivo Y28", "Vivo Y17s"
+  ],
+  oppo: [
+    "Oppo Find N3 Flip", "Oppo Find X7 Ultra",
+    "Oppo Reno 11 Pro", "Oppo Reno 11",
+    "Oppo Reno 10 Pro+", "Oppo Reno 10 Pro", "Oppo Reno 10",
+    "Oppo F25 Pro", "Oppo F23", "Oppo F21s Pro",
+    "Oppo A79", "Oppo A78", "Oppo A59", "Oppo A38"
+  ],
+  realme: [
+    "Realme 12 Pro+", "Realme 12 Pro", "Realme 12+", "Realme 12x",
+    "Realme 11 Pro+", "Realme 11 Pro", "Realme 11x",
+    "Realme GT 2 Pro", "Realme GT Neo 3",
+    "Realme Narzo 70 Pro", "Realme Narzo 60",
+    "Realme C67", "Realme C65", "Realme C55"
+  ],
+  google: [
+    "Pixel 8 Pro", "Pixel 8",
+    "Pixel 7 Pro", "Pixel 7", "Pixel 7a",
+    "Pixel 6 Pro", "Pixel 6", "Pixel 6a",
+    "Pixel 5"
+  ],
+  poco: [
+    "Poco X6 Pro", "Poco X6",
+    "Poco F5", "Poco F4",
+    "Poco M6 Pro", "Poco M6",
+    "Poco C65", "Poco C61"
+  ],
+  nothing: [
+    "Nothing Phone (2a)", "Nothing Phone (2)", "Nothing Phone (1)"
+  ],
+  motorola: [
+    "Moto Edge 50 Pro", "Moto Edge 40 Neo", "Moto Edge 40",
+    "Moto G84", "Moto G54", "Moto G34", "Moto G24",
+    "Razr 40 Ultra", "Razr 40"
+  ],
+  iqoo: [
+    "iQOO 12", "iQOO 11", "iQOO 9 Pro",
+    "iQOO Neo 9 Pro", "iQOO Neo 7 Pro", "iQOO Neo 7",
+    "iQOO Z9", "iQOO Z7 Pro", "iQOO Z6 Lite"
+  ]
 };
 
 const repairTypes = [
@@ -36,103 +102,145 @@ const repairTypes = [
 ];
 
 export default function BrandPage() {
-  const params = useParams(); // Using the hook to safely get the brand
+  const params = useParams();
   
-  // Loading State
   if (!params) return <div className="p-10 text-center">Loading...</div>;
 
   const brandSlug = typeof params.brand === 'string' ? params.brand.toLowerCase() : '';
-  const brandName = typeof params.brand === 'string' ? decodeURIComponent(params.brand).toUpperCase() : '';
+  // Capitalize first letter of brand
+  const brandName = brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
   
-  const models = brandData[brandSlug] || ["Pro Model", "Standard Model"];
+  // Get models or use default if brand not found
+  const allModels = brandData[brandSlug] || ["Model 1", "Model 2", "Model 3"];
+
+  // Search Logic
+  const [searchTerm, setSearchTerm] = useState("");
+  const filteredModels = allModels.filter(model => 
+    model.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const [selectedModel, setSelectedModel] = useState("");
   const [selectedIssue, setSelectedIssue] = useState("");
   const [estimatedPrice, setEstimatedPrice] = useState(0);
 
   return (
-    <div className="max-w-md mx-auto p-4 pb-20 bg-slate-50 min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-slate-900">Select {brandName} Model</h1>
-        <p className="text-sm text-slate-500">Choose your device to see repair prices.</p>
+    <div className="min-h-screen bg-slate-50 pb-20">
+      
+      {/* --- HEADER --- */}
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-10 px-4 py-4 shadow-sm">
+        <div className="max-w-md mx-auto">
+          {/* Back Button & Title */}
+          <div className="flex items-center gap-3 mb-4">
+             <Link href="/" className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors">
+               <ArrowLeft className="w-5 h-5 text-slate-600" />
+             </Link>
+             <h1 className="text-xl font-bold text-slate-900">Select {brandName} Model</h1>
+          </div>
+
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+            <input 
+              type="text"
+              placeholder={`Search your ${brandName}...`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-100 border-none rounded-lg text-sm font-medium text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-3">
-        {models.map((model) => (
-          <Sheet key={model}>
-            <SheetTrigger asChild>
-              <div 
-                onClick={() => {
-                  setSelectedModel(model);
-                  setSelectedIssue(""); 
-                  setEstimatedPrice(0);
-                }}
-                className="p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md cursor-pointer flex justify-between items-center transition-all"
-              >
-                <span className="font-semibold text-slate-700">{model}</span>
-                <span className="text-slate-300">➜</span>
-              </div>
-            </SheetTrigger>
-
-            <SheetContent side="bottom" className="h-[90vh] rounded-t-[20px] overflow-y-auto bg-white">
-              <SheetHeader className="mb-6 text-left">
-                <SheetTitle className="text-xl font-bold text-slate-900">
-                  Repair {model}
-                </SheetTitle>
-                <p className="text-sm text-slate-500">Select the issue to get a price quote.</p>
-              </SheetHeader>
-
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-3">
-                  {repairTypes.map((type) => (
-                    <div 
-                      key={type.id}
-                      onClick={() => {
-                        setSelectedIssue(type.label);
-                        setEstimatedPrice(type.price);
-                      }}
-                      className={`p-3 rounded-lg border cursor-pointer transition-all flex flex-col items-center gap-2 text-center
-                        ${selectedIssue === type.label 
-                          ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600" 
-                          : "border-slate-200 hover:border-blue-400 text-slate-600"
-                        }`}
-                    >
-                      <type.icon className="h-6 w-6" />
-                      <span className="text-xs font-medium">{type.label}</span>
-                      <span className="text-sm font-bold">₹{type.price}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {selectedIssue ? (
-                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div className="bg-slate-100 p-4 rounded-lg mb-4 flex justify-between items-center">
-                      <div>
-                        <p className="text-xs text-slate-500 uppercase font-bold">Total Estimate</p>
-                        <p className="text-lg font-bold text-slate-900">₹{estimatedPrice}</p>
-                      </div>
-                      <div className="text-right">
-                         <p className="text-xs text-slate-500">{selectedIssue}</p>
-                      </div>
-                    </div>
-                    
-                    <RepairForm 
-                      selectedBrand={brandName} 
-                      selectedModel={model} 
-                      selectedIssue={selectedIssue}
-                      estimatedPrice={estimatedPrice}
-                    />
+      {/* --- MODEL GRID --- */}
+      <div className="max-w-md mx-auto p-4">
+        {filteredModels.length === 0 ? (
+          <div className="text-center py-10 text-slate-400">
+            <p>No model found matching "{searchTerm}"</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {filteredModels.map((model) => (
+              <Sheet key={model}>
+                <SheetTrigger asChild>
+                  <div 
+                    onClick={() => {
+                      setSelectedModel(model);
+                      setSelectedIssue(""); 
+                      setEstimatedPrice(0);
+                    }}
+                    className="flex flex-col items-center justify-center p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md cursor-pointer transition-all active:scale-95 h-32 text-center"
+                  >
+                    {/* Phone Icon */}
+                    <Smartphone className="w-8 h-8 text-slate-300 mb-3" />
+                    {/* Model Name */}
+                    <span className="text-sm font-bold text-slate-700 leading-tight">
+                      {model}
+                    </span>
                   </div>
-                ) : (
-                  <div className="text-center py-10 text-slate-400">
-                    <p>Select an issue above to continue</p>
+                </SheetTrigger>
+
+                <SheetContent side="bottom" className="h-[90vh] rounded-t-[20px] overflow-y-auto bg-white">
+                  <SheetHeader className="mb-6 text-left">
+                    <SheetTitle className="text-xl font-bold text-slate-900">
+                      Repair {model}
+                    </SheetTitle>
+                    <p className="text-sm text-slate-500">Select the issue to get a price quote.</p>
+                  </SheetHeader>
+
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-3">
+                      {repairTypes.map((type) => (
+                        <div 
+                          key={type.id}
+                          onClick={() => {
+                            setSelectedIssue(type.label);
+                            setEstimatedPrice(type.price);
+                          }}
+                          className={`p-3 rounded-lg border cursor-pointer transition-all flex flex-col items-center gap-2 text-center
+                            ${selectedIssue === type.label 
+                              ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600" 
+                              : "border-slate-200 hover:border-blue-400 text-slate-600"
+                            }`}
+                        >
+                          <type.icon className="h-6 w-6" />
+                          <span className="text-xs font-medium">{type.label}</span>
+                          <span className="text-sm font-bold">₹{type.price}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {selectedIssue ? (
+                      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="bg-slate-100 p-4 rounded-lg mb-4 flex justify-between items-center">
+                          <div>
+                            <p className="text-xs text-slate-500 uppercase font-bold">Total Estimate</p>
+                            <p className="text-lg font-bold text-slate-900">₹{estimatedPrice}</p>
+                          </div>
+                          <div className="text-right">
+                             <p className="text-xs text-slate-500">{selectedIssue}</p>
+                          </div>
+                        </div>
+                        
+                        <RepairForm 
+                          selectedBrand={brandName} 
+                          selectedModel={model} 
+                          selectedIssue={selectedIssue}
+                          estimatedPrice={estimatedPrice}
+                        />
+                      </div>
+                    ) : (
+                      <div className="text-center py-10 text-slate-400">
+                        <p>Select an issue above to continue</p>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
-        ))}
+                </SheetContent>
+              </Sheet>
+            ))}
+          </div>
+        )}
       </div>
+
     </div>
   );
 }
