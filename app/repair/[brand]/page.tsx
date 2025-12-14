@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import RepairForm from "../../components/RepairForm";
+// GO UP 2 LEVELS to find RepairForm in 'app/components'
+import RepairForm from "../../components/RepairForm"; 
+
+// GO UP 3 LEVELS to find the UI folder in the Root
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../../../components/ui/sheet";
+
+// Icons
 import { Smartphone, Battery, Zap, Volume2, Wifi } from "lucide-react";
 
-// 1. THE DATA: Real Models for ALL your brands
+// 1. THE DATA
 const brandData: Record<string, string[]> = {
   apple: ["iPhone 15 Pro Max", "iPhone 15", "iPhone 14 Pro", "iPhone 14", "iPhone 13", "iPhone 12", "iPhone 11", "iPhone X"],
   samsung: ["Galaxy S24 Ultra", "Galaxy S23", "Galaxy A54", "Galaxy M34", "Galaxy F14", "Note 20 Ultra"],
@@ -38,8 +43,7 @@ export default function BrandPage({ params }: { params: { brand: string } }) {
   const brandSlug = params.brand.toLowerCase();
   const brandName = decodeURIComponent(params.brand).toUpperCase();
   
-  // Default to generic models if brand not found
-  const models = brandData[brandSlug] || ["Pro Model", "Standard Model", "Lite Model"];
+  const models = brandData[brandSlug] || ["Pro Model", "Standard Model"];
 
   const [selectedModel, setSelectedModel] = useState("");
   const [selectedIssue, setSelectedIssue] = useState("");
@@ -111,6 +115,7 @@ export default function BrandPage({ params }: { params: { brand: string } }) {
                       </div>
                     </div>
                     
+                    {/* Pass the data to the form */}
                     <RepairForm 
                       selectedBrand={brandName} 
                       selectedModel={model} 
