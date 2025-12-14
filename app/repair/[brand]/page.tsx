@@ -100,8 +100,9 @@ export default function BrandPage() {
 
   const brandSlug = typeof params.brand === 'string' ? params.brand.toLowerCase() : '';
   const brandName = brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
-  const allModels = brandData[brandSlug] || ["Pro Model", "Standard Model"];
+  const allModels = brandData[brandSlug] || ["Model 1", "Model 2"];
 
+  // Search Logic
   const [searchTerm, setSearchTerm] = useState("");
   const filteredModels = allModels.filter(model => 
     model.toLowerCase().includes(searchTerm.toLowerCase())
@@ -159,27 +160,21 @@ export default function BrandPage() {
                     }}
                     className="group relative flex flex-col items-center justify-between p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all active:scale-95 h-48 overflow-hidden"
                   >
-                    {/* IMAGE CONTAINER WITH CACHE BUSTER */}
+                    {/* IMAGE CONTAINER */}
                     <div className="w-full h-28 relative flex flex-col items-center justify-center mb-2">
                        <img
-                          /* The ?v=... forces a fresh load every time you open the page */
-                          src={`/models/${brandSlug}/${toSlug(model)}.jpg?v=${new Date().getTime()}`}
+                          /* NEW PATH: Looking in /phones folder */
+                          /* The ?v=... forces a fresh load */
+                          src={`/phones/${brandSlug}/${toSlug(model)}.jpg?v=${new Date().getTime()}`}
                           alt={model}
                           className="object-contain max-h-full max-w-full group-hover:scale-110 transition-transform duration-300"
                           onError={(e) => {
-                            const target = e.currentTarget;
-                            // If lowercase fails, try swapping dashes for spaces (just in case)
-                            if (!target.dataset.triedOriginal) {
-                                target.dataset.triedOriginal = "true";
-                                target.src = `/models/${brandSlug}/${model}.jpg`;
-                            } else {
-                                // If ALL fail, show icon
-                                target.style.display = 'none';
-                                target.nextElementSibling?.classList.remove('hidden');
-                            }
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
                           }}
                        />
                        
+                       {/* Fallback Icon */}
                        <div className="hidden absolute inset-0 flex items-center justify-center">
                           <Smartphone className="w-12 h-12 text-slate-200 group-hover:text-blue-500 transition-colors" />
                        </div>
