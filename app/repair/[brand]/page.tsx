@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-// NEW IMPORT: This is the tool that safely grabs the URL in Client Components
-import { useParams } from "next/navigation"; 
-
+import { useState } from "react";
+// GO UP 2 LEVELS to find RepairForm in 'app/components'
 import RepairForm from "../../components/RepairForm"; 
+
+// GO UP 3 LEVELS to find the UI folder in the Root
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../../../components/ui/sheet";
+
+// Icons
 import { Smartphone, Battery, Zap, Volume2, Wifi } from "lucide-react";
 
 // 1. THE DATA
@@ -28,6 +30,7 @@ const brandData: Record<string, string[]> = {
   nothing: ["Nothing Phone (2)", "Nothing Phone (1)", "Nothing Phone (2a)"],
 };
 
+// 2. THE PRICES
 const repairTypes = [
   { id: "screen", label: "Screen Replacement", price: 2499, icon: Smartphone },
   { id: "battery", label: "Battery Replacement", price: 1299, icon: Battery },
@@ -36,24 +39,12 @@ const repairTypes = [
   { id: "sensor", label: "FaceID / Sensors", price: 1499, icon: Wifi },
 ];
 
-export default function BrandPage() {
-  // NEW WAY: Grab params using the Hook
-  const params = useParams();
-  
-  // Safety Check: If params aren't loaded yet, wait.
-  if (!params || !params.brand) {
-    return <div className="p-10 text-center">Loading...</div>;
-  }
-
-  // Safe to use now
-  const brandSlug = (params.brand as string).toLowerCase();
-  const brandName = decodeURIComponent(params.brand as string).toUpperCase();
+export default function BrandPage({ params }: { params: { brand: string } }) {
+  const brandSlug = params.brand.toLowerCase();
+  const brandName = decodeURIComponent(params.brand).toUpperCase();
   
   const models = brandData[brandSlug] || ["Pro Model", "Standard Model"];
 
-  // Hooks must be called at the top level
-  // We use a simple trick here to ensure hooks order is preserved
-  // (We actually don't need 'useEffect' for the state, just standard useState)
   const [selectedModel, setSelectedModel] = useState("");
   const [selectedIssue, setSelectedIssue] = useState("");
   const [estimatedPrice, setEstimatedPrice] = useState(0);
@@ -124,6 +115,7 @@ export default function BrandPage() {
                       </div>
                     </div>
                     
+                    {/* Pass the data to the form */}
                     <RepairForm 
                       selectedBrand={brandName} 
                       selectedModel={model} 
