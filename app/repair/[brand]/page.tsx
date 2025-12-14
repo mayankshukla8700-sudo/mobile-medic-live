@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import RepairForm from "../../components/RepairForm"; 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../../../components/ui/sheet";
-import { Smartphone, Battery, Zap, Volume2, Mic, Camera, PhoneCall, Search, ArrowLeft, Check, Plus } from "lucide-react";
+import { Smartphone, Battery, Zap, Volume2, Mic, Camera, PhoneCall, Search, ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
 
 const toSlug = (text: string) => {
@@ -13,6 +13,7 @@ const toSlug = (text: string) => {
 
 // 1. MASTER PRICING DATABASE
 const modelDatabase: Record<string, { [key: string]: number }> = {
+  // --- Apple ---
   "iphone-15-pro-max": { screen: 28000, battery: 7500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 14500, front_camera: 8500 },
   "iphone-15-pro": { screen: 26000, battery: 7500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 14500, front_camera: 8500 },
   "iphone-15-plus": { screen: 16500, battery: 5500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 9500, front_camera: 7500 },
@@ -46,6 +47,8 @@ const modelDatabase: Record<string, { [key: string]: number }> = {
   "iphone-6": { screen: 1800, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2000, front_camera: 1200 },
   "iphone-se-2022": { screen: 3500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
   "iphone-se-2020": { screen: 2800, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
+
+  // --- Samsung ---
   "galaxy-s24-ultra": { screen: 24000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 9500, front_camera: 5500 },
   "galaxy-s24-plus": { screen: 18000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 5500 },
   "galaxy-s24": { screen: 16000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 5500 },
@@ -162,7 +165,6 @@ export default function BrandPage() {
   const [cart, setCart] = useState<string[]>([]);
   const [showForm, setShowForm] = useState(false);
 
-  // Helper: Toggle items in cart
   const toggleItem = (issueLabel: string) => {
     setCart((prev) => {
       if (prev.includes(issueLabel)) {
@@ -173,21 +175,19 @@ export default function BrandPage() {
     });
   };
 
-  // Helper: Calculate Total Price
   const getTotalPrice = () => {
     let total = 0;
     const slug = toSlug(selectedModel);
     const specificData = modelDatabase[slug];
 
     cart.forEach(issueLabel => {
-      // Find the issue ID based on label
       const type = repairTypes.find(t => t.label === issueLabel);
       if (type) {
         if (specificData) {
           total += specificData[type.id] || 0;
         } else {
           // @ts-ignore
-          total += defaultPrices[type.id] || 999;
+          total += defaultPrices[type.id] || 0;
         }
       }
     });
@@ -233,7 +233,7 @@ export default function BrandPage() {
                   <div 
                     onClick={() => {
                       setSelectedModel(model);
-                      setCart([]); // Clear cart when opening new model
+                      setCart([]); 
                       setShowForm(false);
                     }}
                     className="group relative flex flex-col items-center justify-between p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all active:scale-95 h-48 overflow-hidden"
@@ -260,8 +260,8 @@ export default function BrandPage() {
                   </div>
                 </SheetTrigger>
 
-                {/* DRAWER */}
-                <SheetContent side="bottom" className="h-[90vh] rounded-t-[20px] overflow-y-auto bg-slate-50">
+                {/* DRAWER (FIXED FOR DESKTOP: Centered & Constrained) */}
+                <SheetContent side="bottom" className="h-[90vh] sm:h-auto sm:max-w-xl sm:mx-auto sm:rounded-t-2xl sm:bottom-0 sm:inset-x-0 overflow-y-auto bg-slate-50">
                   <SheetHeader className="mb-6 text-left bg-white p-4 -mt-6 rounded-t-[20px] sticky top-0 z-10 border-b">
                     <SheetTitle className="text-xl font-bold text-slate-900">
                       Repair {model}
@@ -271,11 +271,9 @@ export default function BrandPage() {
 
                   <div className="max-w-2xl mx-auto px-2 pb-32">
                     
-                    {/* SERVICE LIST */}
                     {!showForm ? (
                       <div className="space-y-3">
                         {repairTypes.map((type) => {
-                          // Calculate single price for display
                           const slug = toSlug(model);
                           const specificData = modelDatabase[slug];
                           let price = 999;
@@ -324,7 +322,6 @@ export default function BrandPage() {
                         })}
                       </div>
                     ) : (
-                      // SHOW FORM WHEN PROCEEDING
                       <div className="animate-in slide-in-from-right duration-300">
                          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-4">
                             <div className="flex justify-between items-center mb-4 border-b pb-4">
@@ -359,7 +356,7 @@ export default function BrandPage() {
 
                   {/* BOTTOM BAR (Cart Summary) */}
                   {!showForm && cart.length > 0 && (
-                    <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-2xl z-50 animate-in slide-in-from-bottom duration-300">
+                    <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-2xl z-50 animate-in slide-in-from-bottom duration-300 sm:absolute sm:rounded-b-2xl">
                       <div className="max-w-md mx-auto flex items-center justify-between">
                         <div>
                           <p className="text-xs text-slate-500 uppercase font-bold">{cart.length} Services Selected</p>
