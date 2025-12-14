@@ -12,10 +12,9 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-white tracking-tight">The Mobile Medic</h3>
             <p className="text-sm leading-relaxed text-slate-400">
-              India's most trusted doorstep repair service. Premium parts, expert technicians, and 6 months warranty on all repairs.
+              India's most trusted repair service. We pick up, repair with expert care, and deliver same-day.
             </p>
             <div className="flex gap-4 pt-2">
-              {/* Social Placeholders - These don't go anywhere yet, visuals only */}
               <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer">
                 <Facebook className="w-4 h-4" />
               </div>
@@ -34,13 +33,12 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/" className="hover:text-blue-400 transition-colors">Home</Link></li>
               <li><Link href="/about" className="hover:text-blue-400 transition-colors">About Us</Link></li>
-              {/* Redirect Track Order to Home for now until we build a tracker */}
               <li><Link href="/" className="hover:text-blue-400 transition-colors">Track Order</Link></li>
               <li><Link href="/admin" className="hover:text-blue-400 transition-colors">Partner Login</Link></li>
             </ul>
           </div>
 
-          {/* COLUMN 3: Our Services (ALL Redirect to Home/Brand Selection) */}
+          {/* COLUMN 3: Services */}
           <div>
             <h4 className="text-white font-semibold mb-4">Our Services</h4>
             <ul className="space-y-2 text-sm">
@@ -52,15 +50,15 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* COLUMN 4: Contact Info */}
+          {/* COLUMN 4: Contact Info (UPDATED) */}
           <div>
             <h4 className="text-white font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-blue-500 shrink-0" />
                 <span>
-                  Vijay Vihar, Loni<br />
-                  Ghaziabad, Uttar Pradesh
+                  Uttam Nagar,<br />
+                  Delhi, India
                 </span>
               </li>
               <li className="flex items-center gap-3">
@@ -76,7 +74,6 @@ export default function Footer() {
 
         </div>
 
-        {/* BOTTOM BAR */}
         <div className="mt-12 pt-8 border-t border-slate-800 text-center text-xs text-slate-500">
           <p>&copy; {new Date().getFullYear()} The Mobile Medic. All rights reserved.</p>
         </div>
