@@ -164,31 +164,21 @@ export default function BrandPage() {
                     }}
                     className="group relative flex flex-col items-center justify-between p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all active:scale-95 h-48 overflow-hidden"
                   >
-                    {/* IMAGE CONTAINER WITH DEBUGGING */}
+                    {/* IMAGE CONTAINER */}
                     <div className="w-full h-28 relative flex flex-col items-center justify-center mb-2">
-                       {/* 1. Try to load the image */}
                        <img
                           src={`/models/${brandSlug}/${toSlug(model)}.jpg`}
                           alt={model}
                           className="object-contain max-h-full max-w-full group-hover:scale-110 transition-transform duration-300"
                           onError={(e) => {
-                            // Image failed? Hide it.
                             e.currentTarget.style.display = 'none';
-                            // Show the icon instead
                             e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                            // Show the red debug text
-                            e.currentTarget.nextElementSibling?.nextElementSibling?.classList.remove('hidden');
                           }}
                        />
                        
-                       {/* 2. Fallback Icon (Hidden by default) */}
+                       {/* Fallback Icon (Hidden by default) */}
                        <div className="hidden absolute inset-0 flex items-center justify-center">
                           <Smartphone className="w-12 h-12 text-slate-200 group-hover:text-blue-500 transition-colors" />
-                       </div>
-
-                       {/* 3. DEBUG TEXT (Only shows if image fails) */}
-                       <div className="hidden absolute bottom-0 bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded border border-red-200 whitespace-nowrap z-50">
-                          Needs: {toSlug(model)}.jpg
                        </div>
                     </div>
                     
