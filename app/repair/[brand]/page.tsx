@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import RepairForm from "../../components/RepairForm"; 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../../../components/ui/sheet";
-import { Smartphone, Battery, Zap, Volume2, Wifi, Search, ArrowLeft, AlertCircle } from "lucide-react";
+import { Smartphone, Battery, Zap, Volume2, Mic, Camera, PhoneCall, Search, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 // --- HELPER: Slugify (Converts "iPhone 15 Pro" -> "iphone-15-pro") ---
@@ -13,83 +13,150 @@ const toSlug = (text: string) => {
 };
 
 // ==============================================================================
-// 1. THE MASTER PRICING DATABASE (THIS IS WHERE YOU DO THE HARD WORK) 🛠️
+// 1. THE MASTER PRICING DATABASE (Derived from your Rate Card CSV) 🛠️
 // ==============================================================================
-// Format: "slug-name": { screen: 0, battery: 0, charging: 0, etc }
-const modelDatabase: Record<string, { screen: number, battery: number, charging: number, glass: number }> = {
-  
-  // --- APPLE EXAMPLES ---
-  "iphone-15-pro-max": { screen: 28999, battery: 6500, charging: 3500, glass: 8500 },
-  "iphone-15":         { screen: 14500, battery: 5500, charging: 3000, glass: 6500 },
-  "iphone-14-pro":     { screen: 24500, battery: 5500, charging: 3500, glass: 7500 },
-  "iphone-13":         { screen: 8500,  battery: 3500, charging: 2500, glass: 4500 },
-  "iphone-x":          { screen: 4500,  battery: 2200, charging: 1500, glass: 2500 },
+const modelDatabase: Record<string, { [key: string]: number }> = {
+  // --- Apple ---
+  "iphone-15-pro-max": { screen: 28000, battery: 7500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 14500, front_camera: 8500 },
+  "iphone-15-pro": { screen: 26000, battery: 7500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 14500, front_camera: 8500 },
+  "iphone-15-plus": { screen: 16500, battery: 5500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 9500, front_camera: 7500 },
+  "iphone-15": { screen: 14500, battery: 5500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 9500, front_camera: 7500 },
+  "iphone-14-pro-max": { screen: 26500, battery: 6500, charging: 3500, speaker: 3000, receiver: 3000, mic: 3000, back_camera: 12500, front_camera: 6500 },
+  "iphone-14-pro": { screen: 24500, battery: 6500, charging: 3500, speaker: 3000, receiver: 3000, mic: 3000, back_camera: 12500, front_camera: 6500 },
+  "iphone-14-plus": { screen: 12500, battery: 4500, charging: 3500, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 8500, front_camera: 5500 },
+  "iphone-14": { screen: 9500, battery: 4500, charging: 3500, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 8500, front_camera: 5500 },
+  "iphone-13-pro-max": { screen: 24000, battery: 5500, charging: 3000, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 9500, front_camera: 5500 },
+  "iphone-13-pro": { screen: 22000, battery: 5500, charging: 3000, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 9500, front_camera: 5500 },
+  "iphone-13": { screen: 8500, battery: 3500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4500 },
+  "iphone-13-mini": { screen: 12500, battery: 3500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4500 },
+  "iphone-12-pro-max": { screen: 12500, battery: 4500, charging: 2800, speaker: 2200, receiver: 2200, mic: 2200, back_camera: 8500, front_camera: 4500 },
+  "iphone-12-pro": { screen: 9500, battery: 4500, charging: 2800, speaker: 2200, receiver: 2200, mic: 2200, back_camera: 8500, front_camera: 4500 },
+  "iphone-12": { screen: 7500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
+  "iphone-12-mini": { screen: 9500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
+  "iphone-11-pro-max": { screen: 9500, battery: 4000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4000 },
+  "iphone-11-pro": { screen: 7500, battery: 4000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4000 },
+  "iphone-11": { screen: 4500, battery: 3200, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 3000 },
+  "iphone-xs-max": { screen: 7500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
+  "iphone-xs": { screen: 5500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
+  "iphone-xr": { screen: 4500, battery: 3200, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 3000 },
+  "iphone-x": { screen: 4500, battery: 3200, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 3000 },
+  "iphone-8-plus": { screen: 3200, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
+  "iphone-8": { screen: 2800, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
+  "iphone-7-plus": { screen: 2800, battery: 2200, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 2000 },
+  "iphone-7": { screen: 2400, battery: 2200, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 2000 },
+  "iphone-6s-plus": { screen: 2400, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2500, front_camera: 1500 },
+  "iphone-6s": { screen: 2000, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2500, front_camera: 1500 },
+  "iphone-6-plus": { screen: 2200, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2000, front_camera: 1200 },
+  "iphone-6": { screen: 1800, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2000, front_camera: 1200 },
+  "iphone-se-2022": { screen: 3500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
+  "iphone-se-2020": { screen: 2800, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
 
-  // --- SAMSUNG EXAMPLES ---
-  "galaxy-s24-ultra":  { screen: 22000, battery: 4500, charging: 2500, glass: 6500 },
-  "galaxy-s22-ultra":  { screen: 16000, battery: 3500, charging: 2200, glass: 5500 },
-  "galaxy-m34":        { screen: 2800,  battery: 1500, charging: 800,  glass: 1200 },
-
-  // --- ONEPLUS EXAMPLES ---
-  "oneplus-11r":       { screen: 7500,  battery: 2500, charging: 1500, glass: 3000 },
-  "oneplus-nord-ce-3": { screen: 4500,  battery: 1800, charging: 1200, glass: 2200 },
-
-  // --- REALME/BUDGET EXAMPLES (Cheaper) ---
-  "realme-10-pro":     { screen: 2800,  battery: 1200, charging: 800,  glass: 1500 },
-  "realme-narzo-60":   { screen: 2400,  battery: 1200, charging: 700,  glass: 1200 },
+  // --- Samsung ---
+  "galaxy-s24-ultra": { screen: 24000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 9500, front_camera: 5500 },
+  "galaxy-s24-plus": { screen: 18000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 5500 },
+  "galaxy-s24": { screen: 16000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 5500 },
+  "galaxy-s23-ultra": { screen: 22000, battery: 5000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 5000 },
+  "galaxy-s23-plus": { screen: 16000, battery: 5000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 5000 },
+  "galaxy-s23": { screen: 14000, battery: 5000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 5000 },
+  "galaxy-s23-fe": { screen: 11000, battery: 4500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 4500 },
+  "galaxy-s22-ultra": { screen: 19000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4500 },
+  "galaxy-s22-plus": { screen: 14000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4500 },
+  "galaxy-s22": { screen: 12000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4500 },
 };
 
-// Default "Starting At" prices (Used if you haven't filled the database for a specific phone)
-const defaultPrices = { screen: 1999, battery: 999, charging: 699, glass: 1499 };
+// Default "Starting At" prices (Used if a model isn't in the database above)
+const defaultPrices = { screen: 1999, battery: 999, charging: 699, speaker: 499, receiver: 499, mic: 499, back_camera: 1499, front_camera: 999 };
 
-// ==============================================================================
-
-// 2. BRAND LIST (Names for the UI)
+// 2. BRAND LIST (Matches the Sidebar & Home Page logic)
 const brandData: Record<string, string[]> = {
   apple: [
     "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
     "iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14 Plus", "iPhone 14",
     "iPhone 13 Pro Max", "iPhone 13 Pro", "iPhone 13", "iPhone 13 Mini",
-    "iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 11",
-    "iPhone X", "iPhone XR", "iPhone XS Max", "iPhone 7", "iPhone 8"
+    "iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 12 Mini",
+    "iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11",
+    "iPhone XS Max", "iPhone XS", "iPhone XR", "iPhone X",
+    "iPhone 8 Plus", "iPhone 8", "iPhone 7 Plus", "iPhone 7",
+    "iPhone 6S Plus", "iPhone 6S", "iPhone 6 Plus", "iPhone 6",
+    "iPhone SE (2022)", "iPhone SE (2020)"
   ],
   samsung: [
-    "Galaxy S24 Ultra", "Galaxy S24", "Galaxy S23 Ultra", "Galaxy S22 Ultra",
-    "Galaxy A54", "Galaxy A34", "Galaxy M34", "Galaxy F54", "Note 20 Ultra"
+    "Galaxy S24 Ultra", "Galaxy S24 Plus", "Galaxy S24",
+    "Galaxy S23 Ultra", "Galaxy S23 Plus", "Galaxy S23", "Galaxy S23 FE",
+    "Galaxy S22 Ultra", "Galaxy S22 Plus", "Galaxy S22",
+    "Galaxy S21 Ultra", "Galaxy S21 Plus", "Galaxy S21", "Galaxy S21 FE",
+    "Galaxy S20 Ultra", "Galaxy S20 Plus", "Galaxy S20", "Galaxy S20 FE",
+    "Galaxy S10 Plus", "Galaxy S10", "Galaxy S10e",
+    "Galaxy Note 20 Ultra", "Galaxy Note 20", 
+    "Galaxy Note 10 Plus", "Galaxy Note 10",
+    "Galaxy Z Fold 5", "Galaxy Z Flip 5", "Galaxy Z Fold 4", "Galaxy Z Flip 4",
+    "Galaxy A55", "Galaxy A54", "Galaxy A34", "Galaxy A24", "Galaxy A14",
+    "Galaxy M55", "Galaxy M54", "Galaxy M34", "Galaxy M14", "Galaxy F54"
   ],
   oneplus: [
-    "OnePlus 12", "OnePlus 11R", "OnePlus 11", "OnePlus 10R", 
-    "OnePlus Nord CE 3", "OnePlus Nord 4"
+    "OnePlus 12", "OnePlus 12R", "OnePlus 11", "OnePlus 11R",
+    "OnePlus 10 Pro", "OnePlus 10T", "OnePlus 10R",
+    "OnePlus 9 Pro", "OnePlus 9", "OnePlus 9RT", "OnePlus 9R",
+    "OnePlus 8 Pro", "OnePlus 8T", "OnePlus 8",
+    "OnePlus Nord 4", "OnePlus Nord 3", "OnePlus Nord CE 4", "OnePlus Nord CE 3",
+    "OnePlus Nord 2T"
+  ],
+  xiaomi: [
+    "Xiaomi 14 Ultra", "Xiaomi 14", "Xiaomi 13 Pro", "Xiaomi 13",
+    "Xiaomi 12 Pro", "Xiaomi 12", "Redmi Note 13 Pro+", "Redmi Note 13 Pro",
+    "Redmi Note 13", "Redmi Note 12 Pro+", "Redmi Note 12 Pro", "Redmi Note 12",
+    "Redmi 13C", "Redmi 12 5G", "Redmi A3"
+  ],
+  vivo: [
+    "Vivo X100 Pro", "Vivo X100", "Vivo X90 Pro", "Vivo V30 Pro", "Vivo V30",
+    "Vivo V29 Pro", "Vivo V29", "Vivo T2 Pro", "Vivo T2", "Vivo Y200e", "Vivo Y200"
+  ],
+  oppo: [
+    "Oppo Find N3 Flip", "Oppo Find X7 Ultra", "Oppo Reno 11 Pro", "Oppo Reno 11",
+    "Oppo Reno 10 Pro+", "Oppo Reno 10 Pro", "Oppo F25 Pro", "Oppo F23", "Oppo A79", "Oppo A78"
   ],
   realme: [
-    "Realme 12 Pro+", "Realme 11 Pro", "Realme 10 Pro", "Realme Narzo 60", "Realme C67"
+    "Realme 12 Pro+", "Realme 12 Pro", "Realme 12+", "Realme 12x",
+    "Realme 11 Pro+", "Realme 11 Pro", "Realme 11x", "Realme GT 2 Pro", "Realme Narzo 70 Pro", "Realme C67"
   ],
-  xiaomi: ["Xiaomi 14", "Redmi Note 13 Pro", "Redmi Note 12", "Poco X6 Pro"],
-  vivo: ["Vivo X100", "Vivo V30", "Vivo T2 Pro", "Vivo Y200"],
-  oppo: ["Oppo Reno 11", "Oppo F25 Pro", "Oppo A78"],
-  nothing: ["Nothing Phone (2a)", "Nothing Phone (2)", "Nothing Phone (1)"],
-  google: ["Pixel 8 Pro", "Pixel 7a", "Pixel 6a"],
-  iqoo: ["iQOO 12", "iQOO Neo 9 Pro", "iQOO Z7 Pro"],
-  motorola: ["Moto Edge 40", "Moto G84", "Razr 40 Ultra"]
+  google: [
+    "Pixel 8 Pro", "Pixel 8", "Pixel 7 Pro", "Pixel 7", "Pixel 7a",
+    "Pixel 6 Pro", "Pixel 6", "Pixel 6a", "Pixel 5"
+  ],
+  poco: [
+    "Poco X6 Pro", "Poco X6", "Poco F5", "Poco M6 Pro", "Poco C65"
+  ],
+  iqoo: [
+    "iQOO 12", "iQOO 11", "iQOO Neo 9 Pro", "iQOO Neo 7 Pro", "iQOO Z9"
+  ],
+  motorola: [
+    "Moto Edge 50 Pro", "Moto Edge 40 Neo", "Moto G84", "Moto G54", "Razr 40 Ultra"
+  ],
+  nothing: [
+    "Nothing Phone (2a)", "Nothing Phone (2)", "Nothing Phone (1)"
+  ]
 };
 
-// 3. REPAIR TYPES DEFINITION
+// 3. UPDATED REPAIR TYPES (Matches your CSV Columns)
 const repairTypes = [
   { id: "screen", label: "Screen Replacement", icon: Smartphone },
-  { id: "glass", label: "Glass Only Replacement", icon: ScanFace }, // Added Glass option
   { id: "battery", label: "Battery Replacement", icon: Battery },
-  { id: "charging", label: "Charging Port", icon: Zap },
+  { id: "charging", label: "Charging Jack", icon: Zap },
+  { id: "speaker", label: "Speaker", icon: Volume2 },
+  { id: "receiver", label: "Receiver", icon: PhoneCall },
+  { id: "mic", label: "Mic", icon: Mic },
+  { id: "back_camera", label: "Back Camera", icon: Camera },
+  { id: "front_camera", label: "Front Camera", icon: Camera },
 ];
-
-// Helper Icon for Glass
-import { ScanFace } from "lucide-react"; 
 
 export default function BrandPage() {
   const params = useParams();
+  
   if (!params) return <div className="p-10 text-center">Loading...</div>;
 
   const brandSlug = typeof params.brand === 'string' ? params.brand.toLowerCase() : '';
   const brandName = brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
+  
   const allModels = brandData[brandSlug] || ["Model 1", "Model 2"];
 
   // Search Logic
@@ -104,7 +171,7 @@ export default function BrandPage() {
 
   // --- THE SMART PRICING LOGIC ---
   const getDynamicPrice = (modelName: string, issueId: string) => {
-    const slug = toSlug(modelName); // e.g., "iphone-15-pro"
+    const slug = toSlug(modelName); 
     
     // 1. Check if we have specific data for this exact phone
     const specificData = modelDatabase[slug];
@@ -163,7 +230,7 @@ export default function BrandPage() {
                     }}
                     className="group relative flex flex-col items-center justify-between p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all active:scale-95 h-48 overflow-hidden"
                   >
-                    {/* IMAGE LOGIC (Matches your local files) */}
+                    {/* IMAGE LOGIC */}
                     <div className="w-full h-28 relative flex flex-col items-center justify-center mb-2">
                        <img
                           src={`/models/${brandSlug}/${toSlug(model)}.jpg`}
