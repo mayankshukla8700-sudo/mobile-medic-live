@@ -70,7 +70,7 @@ export default function RootLayout({
               </a>
 
               {/* Mobile Icon */}
-              <a href="tel:+919999999999" className="md:hidden bg-teal-500 text-white p-2.5 rounded-lg shadow-sm">
+              <a href="tel:+918920766791" className="md:hidden bg-blue-600 text-white p-2.5 rounded-lg shadow-sm">
                  <Phone className="w-5 h-5" />
               </a>
             </div>
