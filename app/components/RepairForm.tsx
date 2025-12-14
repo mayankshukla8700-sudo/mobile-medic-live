@@ -2,19 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase"; 
-import { Loader2, User, Phone, MapPin, CheckCircle, ArrowRight, Home, Building, Hash, Navigation, Landmark } from "lucide-react";
+import { Loader2, User, Phone, MapPin, CheckCircle, ArrowRight, Home, Building, Hash, Navigation, Landmark, X } from "lucide-react";
 import { toast } from "sonner";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"; // We use Sheet for the right drawer
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 
-interface RepairFormProps {
-  selectedBrand: string;
-  selectedModel: string;
-  selectedIssues: string[]; 
-  estimatedPrice: number;
-}
-
-// --- SMART PINCODE DATABASE (Delhi & Mumbai) ---
-// You can add more lines here easily!
+// --- SMART PINCODE DATABASE ---
 const pincodeData: Record<string, string> = {
   // DELHI
   "110053": "Bhajanpura, North East Delhi",
@@ -37,6 +29,13 @@ const pincodeData: Record<string, string> = {
   "400005": "Colaba, South Mumbai"
 };
 
+interface RepairFormProps {
+  selectedBrand: string;
+  selectedModel: string;
+  selectedIssues: string[]; 
+  estimatedPrice: number;
+}
+
 export default function RepairForm({ selectedBrand, selectedModel, selectedIssues, estimatedPrice }: RepairFormProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -47,8 +46,8 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
   const [date, setDate] = useState("Today");
 
   // ADDRESS LOGIC
-  const [pickupAddress, setPickupAddress] = useState(""); // Stores final formatted string
-  const [dropAddress, setDropAddress] = useState("");     // Stores final formatted string
+  const [pickupAddress, setPickupAddress] = useState(""); 
+  const [dropAddress, setDropAddress] = useState("");     
   const [isDropSame, setIsDropSame] = useState(true);
   
   // Drawer States
@@ -63,23 +62,21 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
   const [tempLandmark, setTempLandmark] = useState("");
   const [tempAltPhone, setTempAltPhone] = useState("");
 
-  // Auto-Detect Area when Pincode changes
+  // Auto-Detect Area (Optimized)
   useEffect(() => {
     if (tempPincode.length === 6) {
       const area = pincodeData[tempPincode];
       if (area) {
         setTempArea(area);
-        toast.success(`Location detected: ${area}`);
       } else {
         setTempArea("");
-        toast.error("Pincode not serviceable yet or invalid.");
       }
     }
   }, [tempPincode]);
 
   const openAddressDrawer = (type: "pickup" | "drop") => {
     setEditingType(type);
-    // Reset temp fields for clean entry
+    // Reset fields
     setTempPincode("");
     setTempArea("");
     setTempHouse("");
@@ -91,15 +88,14 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
 
   const saveAddress = () => {
     if (!tempPincode || !tempArea || !tempHouse || !tempStreet) {
-      toast.error("Please fill all mandatory fields (*)");
+      toast.error("Please fill Pincode, House No, and Area");
       return;
     }
 
     const formattedAddress = `
-      ${tempHouse}, ${tempStreet},
-      ${tempArea}, Pincode: ${tempPincode}
-      ${tempLandmark ? `(Near: ${tempLandmark})` : ""}
-      ${tempAltPhone ? `Alt Phone: ${tempAltPhone}` : ""}
+      ${tempHouse}, ${tempStreet}, ${tempArea} (Pin: ${tempPincode})
+      ${tempLandmark ? `Near: ${tempLandmark}` : ""}
+      ${tempAltPhone ? `Alt: ${tempAltPhone}` : ""}
     `.replace(/\s+/g, ' ').trim();
 
     if (editingType === "pickup") {
@@ -109,7 +105,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
     }
     
     setIsAddressDrawerOpen(false);
-    toast.success(`${editingType === 'pickup' ? "Pickup" : "Drop"} Address Saved!`);
+    toast.success("Address Saved");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -117,13 +113,13 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
     setLoading(true);
 
     if (!name || !phone || !pickupAddress) {
-      toast.error("Please details & pickup address");
+      toast.error("Please fill Name, Phone & Pickup Address");
       setLoading(false);
       return;
     }
 
     if (!isDropSame && !dropAddress) {
-      toast.error("Please add a drop address");
+      toast.error("Please add a Drop Address");
       setLoading(false);
       return;
     }
@@ -154,7 +150,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
 
     } catch (err) {
       console.error("Booking Error:", err);
-      toast.error("Something went wrong.");
+      toast.error("Connection Failed. Try again.");
     } finally {
       setLoading(false);
     }
@@ -168,7 +164,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
         </div>
         <h3 className="text-xl font-bold text-slate-900">Booking Confirmed!</h3>
         <p className="text-slate-500 mt-2 max-w-xs mx-auto">
-          We will pick up your <strong>{selectedModel}</strong> from {pickupAddress.substring(0, 20)}...
+          We will pick up your <strong>{selectedModel}</strong> today.
         </p>
         <button onClick={() => window.location.reload()} className="mt-6 text-blue-600 font-semibold hover:underline">
           Book Another Repair
@@ -179,7 +175,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* Date Selection */}
         <div className="space-y-2">
@@ -200,7 +196,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
           </div>
         </div>
 
-        {/* Personal Details */}
+        {/* Contact Info */}
         <div className="space-y-3">
           <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Contact Details</label>
           <div className="relative">
@@ -227,57 +223,65 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
           </div>
         </div>
 
-        {/* ADDRESS SECTION (Triggers the Drawer) */}
-        <div className="space-y-3">
+        {/* --- LOCATIONS SECTION --- */}
+        <div className="space-y-4">
           <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Locations</label>
           
-          {/* Pickup Trigger */}
+          {/* 1. PICKUP ADDRESS BUTTON */}
           <div 
             onClick={() => openAddressDrawer("pickup")}
-            className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer hover:bg-slate-50 transition-all ${pickupAddress ? "border-blue-500 bg-blue-50/50" : "border-slate-200 border-dashed"}`}
+            className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all active:scale-[0.98] ${pickupAddress ? "bg-blue-50 border-blue-500" : "bg-white border-slate-200 border-dashed hover:border-blue-400"}`}
           >
-            <div className={`p-2 rounded-full ${pickupAddress ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+            <div className={`p-2.5 rounded-full ${pickupAddress ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}>
               <MapPin className="w-5 h-5" />
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-slate-700">Pickup Address</p>
-              <p className="text-xs text-slate-500 line-clamp-1">
-                {pickupAddress || "Tap to add address (Mandatory)"}
+            <div className="flex-1 overflow-hidden">
+              <p className="text-sm font-bold text-slate-700">Pickup Address <span className="text-red-500">*</span></p>
+              <p className="text-xs text-slate-500 truncate">
+                {pickupAddress || "Tap to add address"}
               </p>
             </div>
             <ArrowRight className="w-4 h-4 text-slate-300" />
           </div>
 
-          {/* Drop Logic */}
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-            <div className="flex gap-4 mb-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" checked={isDropSame} onChange={() => setIsDropSame(true)} className="text-blue-600" />
-                <span className="text-sm text-slate-700">Same as Pickup</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" checked={!isDropSame} onChange={() => setIsDropSame(false)} className="text-blue-600" />
-                <span className="text-sm text-slate-700">Other Address</span>
-              </label>
-            </div>
+          {/* 2. DROP OPTION */}
+          <div className="bg-slate-50/50 p-1 rounded-lg border border-slate-200">
+             {/* Toggle Switch */}
+             <div className="flex p-1 gap-1 bg-slate-200/50 rounded-lg mb-2">
+                <button
+                  type="button"
+                  onClick={() => setIsDropSame(true)}
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-all ${isDropSame ? "bg-white text-blue-700 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                >
+                  Same as Pickup
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsDropSame(false)}
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-all ${!isDropSame ? "bg-white text-blue-700 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                >
+                  Change Drop
+                </button>
+             </div>
 
-            {!isDropSame && (
-              <div 
-                onClick={() => openAddressDrawer("drop")}
-                className={`mt-2 flex items-center gap-3 p-3 rounded-lg border cursor-pointer bg-white hover:bg-slate-50 transition-all ${dropAddress ? "border-blue-500" : "border-slate-200 border-dashed"}`}
-              >
-                <div className={`p-2 rounded-full ${dropAddress ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}>
-                  <Navigation className="w-5 h-5" />
+             {/* DROP ADDRESS BUTTON (Only shows if 'Change Drop' is clicked) */}
+             {!isDropSame && (
+                <div 
+                  onClick={() => openAddressDrawer("drop")}
+                  className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer bg-white transition-all active:scale-[0.98] ${dropAddress ? "border-blue-500" : "border-slate-200 border-dashed"}`}
+                >
+                  <div className={`p-2 rounded-full ${dropAddress ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+                    <Navigation className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <p className="text-sm font-bold text-slate-700">Drop Address</p>
+                    <p className="text-xs text-slate-500 truncate">
+                      {dropAddress || "Tap to add drop location"}
+                    </p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate-300" />
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-bold text-slate-700">Drop Address</p>
-                  <p className="text-xs text-slate-500 line-clamp-1">
-                    {dropAddress || "Tap to add drop location"}
-                  </p>
-                </div>
-                <ArrowRight className="w-4 h-4 text-slate-300" />
-              </div>
-            )}
+             )}
           </div>
         </div>
 
@@ -285,116 +289,128 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2"
+          className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
         >
           {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : `Confirm Booking ₹${estimatedPrice}`}
         </button>
       </form>
 
-      {/* --- RIGHT SIDE ADDRESS DRAWER --- */}
+      {/* --- ADDRESS DRAWER (Right Side on Desktop, Bottom on Mobile) --- */}
       <Sheet open={isAddressDrawerOpen} onOpenChange={setIsAddressDrawerOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
-          <SheetHeader className="mb-6">
-            <SheetTitle className="text-xl font-bold flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-blue-600" />
-              {editingType === 'pickup' ? "Add Pickup Address" : "Add Drop Address"}
-            </SheetTitle>
-          </SheetHeader>
+        <SheetContent 
+          side="right" // Opens from right
+          className="w-full sm:max-w-md overflow-y-auto border-l border-slate-200 shadow-2xl p-0"
+        >
+          {/* Drawer Header */}
+          <div className="sticky top-0 bg-white z-10 border-b border-slate-100 p-4 flex items-center justify-between">
+             <div className="flex items-center gap-2">
+                <div className={`p-2 rounded-full ${editingType === 'pickup' ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-600"}`}>
+                   {editingType === 'pickup' ? <MapPin className="w-5 h-5"/> : <Navigation className="w-5 h-5"/>}
+                </div>
+                <h3 className="font-bold text-lg text-slate-900">
+                  {editingType === 'pickup' ? "Add Pickup Address" : "Add Drop Address"}
+                </h3>
+             </div>
+             {/* Close Button is handled by Sheet automatically, but we can add a manual one if needed */}
+          </div>
 
-          <div className="space-y-5">
-            {/* 1. Pincode (The Trigger) */}
-            <div className="space-y-1">
+          <div className="p-5 space-y-6">
+            {/* 1. Pincode */}
+            <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-500 uppercase">Pincode <span className="text-red-500">*</span></label>
               <div className="relative">
-                <Hash className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                <Hash className="absolute left-3 top-3.5 w-5 h-5 text-slate-400" />
                 <input
                   type="tel"
                   maxLength={6}
                   placeholder="e.g. 110053"
                   value={tempPincode}
                   onChange={(e) => setTempPincode(e.target.value.replace(/\D/g, ''))}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-lg font-bold tracking-widest focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-lg font-bold tracking-widest text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                 />
               </div>
-              {/* Auto-detected Area Display */}
+              {/* Auto-detected Area */}
               {tempArea ? (
-                <div className="text-sm text-green-600 font-medium flex items-center gap-1 mt-1 animate-in slide-in-from-top-1">
-                  <CheckCircle className="w-3 h-3" /> {tempArea}
+                <div className="bg-green-50 text-green-700 text-sm font-medium px-3 py-2 rounded-lg flex items-center gap-2 border border-green-200 animate-in fade-in slide-in-from-top-1">
+                  <CheckCircle className="w-4 h-4" /> {tempArea}
                 </div>
               ) : tempPincode.length === 6 ? (
-                <div className="text-xs text-red-500 mt-1">
-                  We don't serve this area yet or check pincode.
+                <div className="text-xs text-red-500 font-medium px-1">
+                  We don't serve this pincode yet.
                 </div>
               ) : null}
             </div>
 
             {/* 2. House No */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-500 uppercase">Flat / House No / Office <span className="text-red-500">*</span></label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 uppercase">Flat / House / Office <span className="text-red-500">*</span></label>
               <div className="relative">
-                <Home className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                <Home className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   placeholder="e.g. Flat 4B, 3rd Floor"
                   value={tempHouse}
                   onChange={(e) => setTempHouse(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-900"
                 />
               </div>
             </div>
 
             {/* 3. Street / Locality */}
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-500 uppercase">Area / Colony / Street <span className="text-red-500">*</span></label>
               <div className="relative">
-                <Building className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                <Building className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   placeholder="e.g. Gali No 4, Vijay Vihar"
                   value={tempStreet}
                   onChange={(e) => setTempStreet(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-900"
                 />
               </div>
             </div>
 
             {/* 4. Landmark */}
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-500 uppercase">Landmark (Optional)</label>
               <div className="relative">
-                <Landmark className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                <Landmark className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   placeholder="e.g. Near Mother Dairy"
                   value={tempLandmark}
                   onChange={(e) => setTempLandmark(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-900"
                 />
               </div>
             </div>
 
             {/* 5. Alt Phone */}
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-500 uppercase">Alternate Number (Optional)</label>
               <div className="relative">
-                <Phone className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                <Phone className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                 <input
                   type="tel"
                   placeholder="e.g. 9876543210"
                   value={tempAltPhone}
                   onChange={(e) => setTempAltPhone(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-900"
                 />
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={saveAddress}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg mt-4 transition-all active:scale-[0.98]"
-            >
-              Save Address
-            </button>
+            {/* Save Button */}
+            <div className="pt-4">
+              <button
+                type="button"
+                onClick={saveAddress}
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98]"
+              >
+                Save Address
+              </button>
+            </div>
 
           </div>
         </SheetContent>
