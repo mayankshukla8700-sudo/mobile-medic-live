@@ -4,19 +4,15 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import RepairForm from "../../components/RepairForm"; 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../../../components/ui/sheet";
-import { Smartphone, Battery, Zap, Volume2, Mic, Camera, PhoneCall, Search, ArrowLeft } from "lucide-react";
+import { Smartphone, Battery, Zap, Volume2, Mic, Camera, PhoneCall, Search, ArrowLeft, Check, Plus } from "lucide-react";
 import Link from "next/link";
 
-// --- HELPER: Slugify (Converts "iPhone 15 Pro" -> "iphone-15-pro") ---
 const toSlug = (text: string) => {
   return text.toLowerCase().replace(/ /g, "-").replace(/[()]/g, "");
 };
 
-// ==============================================================================
-// 1. THE MASTER PRICING DATABASE (Derived from your Rate Card CSV) 🛠️
-// ==============================================================================
+// 1. MASTER PRICING DATABASE
 const modelDatabase: Record<string, { [key: string]: number }> = {
-  // --- Apple ---
   "iphone-15-pro-max": { screen: 28000, battery: 7500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 14500, front_camera: 8500 },
   "iphone-15-pro": { screen: 26000, battery: 7500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 14500, front_camera: 8500 },
   "iphone-15-plus": { screen: 16500, battery: 5500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 9500, front_camera: 7500 },
@@ -50,8 +46,6 @@ const modelDatabase: Record<string, { [key: string]: number }> = {
   "iphone-6": { screen: 1800, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2000, front_camera: 1200 },
   "iphone-se-2022": { screen: 3500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
   "iphone-se-2020": { screen: 2800, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
-
-  // --- Samsung ---
   "galaxy-s24-ultra": { screen: 24000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 9500, front_camera: 5500 },
   "galaxy-s24-plus": { screen: 18000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 5500 },
   "galaxy-s24": { screen: 16000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 5500 },
@@ -64,10 +58,9 @@ const modelDatabase: Record<string, { [key: string]: number }> = {
   "galaxy-s22": { screen: 12000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4500 },
 };
 
-// Default "Starting At" prices (Used if a model isn't in the database above)
 const defaultPrices = { screen: 1999, battery: 999, charging: 699, speaker: 499, receiver: 499, mic: 499, back_camera: 1499, front_camera: 999 };
 
-// 2. BRAND LIST (Matches the Sidebar & Home Page logic)
+// 2. BRAND LIST
 const brandData: Record<string, string[]> = {
   apple: [
     "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
@@ -137,10 +130,10 @@ const brandData: Record<string, string[]> = {
   ]
 };
 
-// 3. UPDATED REPAIR TYPES (Matches your CSV Columns)
+// 3. REPAIR TYPES UI
 const repairTypes = [
-  { id: "screen", label: "Screen Replacement", icon: Smartphone },
-  { id: "battery", label: "Battery Replacement", icon: Battery },
+  { id: "screen", label: "Screen", icon: Smartphone },
+  { id: "battery", label: "Battery", icon: Battery },
   { id: "charging", label: "Charging Jack", icon: Zap },
   { id: "speaker", label: "Speaker", icon: Volume2 },
   { id: "receiver", label: "Receiver", icon: PhoneCall },
@@ -156,7 +149,6 @@ export default function BrandPage() {
 
   const brandSlug = typeof params.brand === 'string' ? params.brand.toLowerCase() : '';
   const brandName = brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
-  
   const allModels = brandData[brandSlug] || ["Model 1", "Model 2"];
 
   // Search Logic
@@ -165,25 +157,41 @@ export default function BrandPage() {
     model.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // CART LOGIC
   const [selectedModel, setSelectedModel] = useState("");
-  const [selectedIssue, setSelectedIssue] = useState("");
-  const [estimatedPrice, setEstimatedPrice] = useState(0);
+  const [cart, setCart] = useState<string[]>([]);
+  const [showForm, setShowForm] = useState(false);
 
-  // --- THE SMART PRICING LOGIC ---
-  const getDynamicPrice = (modelName: string, issueId: string) => {
-    const slug = toSlug(modelName); 
-    
-    // 1. Check if we have specific data for this exact phone
+  // Helper: Toggle items in cart
+  const toggleItem = (issueLabel: string) => {
+    setCart((prev) => {
+      if (prev.includes(issueLabel)) {
+        return prev.filter(item => item !== issueLabel);
+      } else {
+        return [...prev, issueLabel];
+      }
+    });
+  };
+
+  // Helper: Calculate Total Price
+  const getTotalPrice = () => {
+    let total = 0;
+    const slug = toSlug(selectedModel);
     const specificData = modelDatabase[slug];
-    
-    if (specificData) {
-      // @ts-ignore
-      return specificData[issueId] || 0; // Return specific price (e.g., 28999)
-    }
 
-    // 2. If no specific data, return the default "Starting At" price
-    // @ts-ignore
-    return defaultPrices[issueId] || 999;
+    cart.forEach(issueLabel => {
+      // Find the issue ID based on label
+      const type = repairTypes.find(t => t.label === issueLabel);
+      if (type) {
+        if (specificData) {
+          total += specificData[type.id] || 0;
+        } else {
+          // @ts-ignore
+          total += defaultPrices[type.id] || 999;
+        }
+      }
+    });
+    return total;
   };
 
   return (
@@ -225,8 +233,8 @@ export default function BrandPage() {
                   <div 
                     onClick={() => {
                       setSelectedModel(model);
-                      setSelectedIssue(""); 
-                      setEstimatedPrice(0);
+                      setCart([]); // Clear cart when opening new model
+                      setShowForm(false);
                     }}
                     className="group relative flex flex-col items-center justify-between p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all active:scale-95 h-48 overflow-hidden"
                   >
@@ -253,62 +261,120 @@ export default function BrandPage() {
                 </SheetTrigger>
 
                 {/* DRAWER */}
-                <SheetContent side="bottom" className="h-[90vh] rounded-t-[20px] overflow-y-auto bg-white">
-                  <SheetHeader className="mb-6 text-left">
+                <SheetContent side="bottom" className="h-[90vh] rounded-t-[20px] overflow-y-auto bg-slate-50">
+                  <SheetHeader className="mb-6 text-left bg-white p-4 -mt-6 rounded-t-[20px] sticky top-0 z-10 border-b">
                     <SheetTitle className="text-xl font-bold text-slate-900">
                       Repair {model}
                     </SheetTitle>
-                    <p className="text-sm text-slate-500">Select the issue to see the exact price.</p>
+                    <p className="text-sm text-slate-500">Select multiple issues to see total estimate.</p>
                   </SheetHeader>
 
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-2 gap-3">
-                      {repairTypes.map((type) => {
-                        // CALCULATE PRICE HERE
-                        const price = getDynamicPrice(model, type.id);
-                        
-                        return (
-                          <div 
-                            key={type.id}
-                            onClick={() => {
-                              setSelectedIssue(type.label);
-                              setEstimatedPrice(price);
-                            }}
-                            className={`p-3 rounded-lg border cursor-pointer transition-all flex flex-col items-center gap-2 text-center
-                              ${selectedIssue === type.label 
-                                ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600" 
-                                : "border-slate-200 hover:border-blue-400 text-slate-600"
-                              }`}
-                          >
-                            <type.icon className="h-6 w-6" />
-                            <span className="text-xs font-medium">{type.label}</span>
-                            <span className="text-sm font-bold">₹{price}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
+                  <div className="max-w-2xl mx-auto px-2 pb-32">
+                    
+                    {/* SERVICE LIST */}
+                    {!showForm ? (
+                      <div className="space-y-3">
+                        {repairTypes.map((type) => {
+                          // Calculate single price for display
+                          const slug = toSlug(model);
+                          const specificData = modelDatabase[slug];
+                          let price = 999;
+                          if (specificData) {
+                             price = specificData[type.id] || 0;
+                          } else {
+                             // @ts-ignore
+                             price = defaultPrices[type.id] || 0;
+                          }
 
-                    {selectedIssue && (
-                      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="bg-slate-100 p-4 rounded-lg mb-4 flex justify-between items-center">
-                          <div>
-                            <p className="text-xs text-slate-500 uppercase font-bold">Total Estimate</p>
-                            <p className="text-lg font-bold text-slate-900">₹{estimatedPrice}</p>
-                          </div>
-                          <div className="text-right">
-                             <p className="text-xs text-slate-500">{selectedIssue}</p>
-                          </div>
-                        </div>
-                        
-                        <RepairForm 
-                          selectedBrand={brandName} 
-                          selectedModel={model} 
-                          selectedIssue={selectedIssue}
-                          estimatedPrice={estimatedPrice}
-                        />
+                          const isAdded = cart.includes(type.label);
+
+                          return (
+                            <div 
+                              key={type.id}
+                              className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
+                                isAdded 
+                                  ? "bg-blue-50 border-blue-500 shadow-sm" 
+                                  : "bg-white border-slate-200 hover:border-blue-300"
+                              }`}
+                            >
+                              <div className="flex items-center gap-4">
+                                <div className={`p-2 rounded-full ${isAdded ? "bg-blue-200 text-blue-700" : "bg-slate-100 text-slate-500"}`}>
+                                  <type.icon className="w-5 h-5" />
+                                </div>
+                                <div>
+                                  <h4 className={`font-bold ${isAdded ? "text-blue-900" : "text-slate-700"}`}>
+                                    {type.label}
+                                  </h4>
+                                  <p className="text-sm font-semibold text-slate-500">₹{price}</p>
+                                </div>
+                              </div>
+
+                              <button
+                                onClick={() => toggleItem(type.label)}
+                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${
+                                  isAdded
+                                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                                    : "bg-slate-100 text-blue-600 hover:bg-blue-100"
+                                }`}
+                              >
+                                {isAdded ? "Added" : "Add +"}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      // SHOW FORM WHEN PROCEEDING
+                      <div className="animate-in slide-in-from-right duration-300">
+                         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-4">
+                            <div className="flex justify-between items-center mb-4 border-b pb-4">
+                              <h3 className="font-bold text-slate-900">Booking Summary</h3>
+                              <button onClick={() => setShowForm(false)} className="text-xs text-blue-600 underline">Edit</button>
+                            </div>
+                            <ul className="space-y-2 mb-4">
+                              {cart.map(item => (
+                                <li key={item} className="text-sm text-slate-600 flex items-center gap-2">
+                                  <Check className="w-4 h-4 text-green-500" /> {item}
+                                </li>
+                              ))}
+                            </ul>
+                            <div className="flex justify-between items-center pt-2 border-t font-bold text-lg text-slate-900">
+                              <span>Total Estimate</span>
+                              <span>₹{getTotalPrice()}</span>
+                            </div>
+                         </div>
+
+                         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <RepairForm 
+                              selectedBrand={brandName} 
+                              selectedModel={model} 
+                              selectedIssues={cart}
+                              estimatedPrice={getTotalPrice()}
+                            />
+                         </div>
                       </div>
                     )}
+
                   </div>
+
+                  {/* BOTTOM BAR (Cart Summary) */}
+                  {!showForm && cart.length > 0 && (
+                    <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-2xl z-50 animate-in slide-in-from-bottom duration-300">
+                      <div className="max-w-md mx-auto flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-slate-500 uppercase font-bold">{cart.length} Services Selected</p>
+                          <p className="text-2xl font-extrabold text-slate-900">₹{getTotalPrice()}</p>
+                        </div>
+                        <button 
+                          onClick={() => setShowForm(true)}
+                          className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg"
+                        >
+                          Book Now
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                 </SheetContent>
               </Sheet>
             ))}
