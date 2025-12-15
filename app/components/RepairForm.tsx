@@ -1,10 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase"; 
-import { Loader2, User, Phone, MapPin, CheckCircle, ArrowRight, Home, Building, Hash, Navigation, Landmark, Plus, X, ArrowLeft } from "lucide-react";
+
+// FIX 1: Use "../../" to go back to the Root folder to find 'lib'
+import { supabase } from "../../lib/supabase"; 
+
+// FIX 2: Use CalendarDays icon to avoid name conflict with Calendar component
+import { 
+  Loader2, User, Phone, MapPin, CheckCircle, ArrowRight, 
+  Home, Building, Hash, Navigation, Landmark, Plus, X, 
+  ArrowLeft, CalendarDays 
+} from "lucide-react";
+
 import { toast } from "sonner";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+
+// FIX 3: Use "../../" to go back to Root folder to find 'components/ui'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../../components/ui/sheet";
+import { Calendar } from "../../components/ui/calendar"; 
+import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover"; 
 
 // --- SMART PINCODE DATABASE ---
 const pincodeData: Record<string, string> = {
@@ -40,15 +53,16 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [date, setDate] = useState("Today");
+  
+  // DATE LOGIC
+  const [dateSelection, setDateSelection] = useState<"Today" | "Tomorrow" | "Later">("Today");
+  const [customDate, setCustomDate] = useState<Date | undefined>(new Date());
 
   // ADDRESS LOGIC
   const [pickupAddress, setPickupAddress] = useState(""); 
   const [dropAddress, setDropAddress] = useState("");     
-  
   const [showDropOptions, setShowDropOptions] = useState(false); 
   const [isDropSame, setIsDropSame] = useState(true); 
-  
   const [isAddressDrawerOpen, setIsAddressDrawerOpen] = useState(false);
   const [editingType, setEditingType] = useState<"pickup" | "drop">("pickup");
 
@@ -105,14 +119,12 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
     e.preventDefault();
     setLoading(true);
 
-    // Validation
     if (!name || !pickupAddress) {
       toast.error("Please fill Name & Pickup Address");
       setLoading(false);
       return;
     }
 
-    // STRICT PHONE VALIDATION: Must be exactly 10 digits
     if (phone.length !== 10) {
       toast.error("Please enter a valid 10-digit mobile number");
       setLoading(false);
@@ -123,6 +135,18 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
       toast.error("Please add a Drop Address");
       setLoading(false);
       return;
+    }
+
+    // --- FIX: Explicitly type 'finalDate' as string so it accepts any text ---
+    let finalDate: string = dateSelection; 
+    
+    if (dateSelection === "Later" && customDate) {
+      finalDate = customDate.toLocaleDateString('en-US', { 
+        weekday: 'short', 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      }); 
     }
 
     try {
@@ -140,7 +164,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
             device_model: `${selectedBrand} ${selectedModel}`,
             issue_description: selectedIssues.join(", "),
             estimated_cost: estimatedPrice,
-            scheduled_date: date,
+            scheduled_date: finalDate, 
             status: 'pending'
           }
         ]);
@@ -165,7 +189,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
         </div>
         <h3 className="text-xl font-bold text-slate-900">Booking Confirmed!</h3>
         <p className="text-slate-500 mt-2 max-w-xs mx-auto">
-          We will pick up your <strong>{selectedModel}</strong> today.
+          We will pick up your <strong>{selectedModel}</strong>.
         </p>
         <button onClick={() => window.location.reload()} className="mt-6 text-blue-600 font-semibold hover:underline">
           Book Another Repair
@@ -182,18 +206,54 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
         <div className="space-y-2">
           <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Schedule Pickup</label>
           <div className="grid grid-cols-3 gap-2">
-            {['Today', 'Tomorrow', 'Later'].map((d) => (
-              <button
-                key={d}
-                type="button"
-                onClick={() => setDate(d)}
-                className={`py-2 px-2 text-sm font-medium rounded-lg border transition-all ${
-                  date === d ? "bg-blue-600 text-white border-blue-600 shadow-sm" : "bg-white text-slate-600 border-slate-200"
-                }`}
-              >
-                {d}
-              </button>
-            ))}
+            
+            <button
+              type="button"
+              onClick={() => setDateSelection("Today")}
+              className={`py-2 px-2 text-sm font-medium rounded-lg border transition-all ${
+                dateSelection === "Today" ? "bg-blue-600 text-white border-blue-600 shadow-sm" : "bg-white text-slate-600 border-slate-200"
+              }`}
+            >
+              Today
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setDateSelection("Tomorrow")}
+              className={`py-2 px-2 text-sm font-medium rounded-lg border transition-all ${
+                dateSelection === "Tomorrow" ? "bg-blue-600 text-white border-blue-600 shadow-sm" : "bg-white text-slate-600 border-slate-200"
+              }`}
+            >
+              Tomorrow
+            </button>
+
+            {/* Calendar Popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  onClick={() => setDateSelection("Later")}
+                  className={`py-2 px-2 text-sm font-medium rounded-lg border transition-all flex items-center justify-center gap-2 ${
+                    dateSelection === "Later" ? "bg-blue-600 text-white border-blue-600 shadow-sm" : "bg-white text-slate-600 border-slate-200"
+                  }`}
+                >
+                  <CalendarDays className="w-3 h-3" />
+                  {dateSelection === "Later" && customDate 
+                    ? customDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) 
+                    : "Later"}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="single"
+                  selected={customDate}
+                  onSelect={(d) => { if(d) { setCustomDate(d); setDateSelection("Later"); } }}
+                  initialFocus
+                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))} 
+                />
+              </PopoverContent>
+            </Popover>
+
           </div>
         </div>
 
@@ -216,7 +276,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
             <input
               type="tel"
               placeholder="Phone Number"
-              maxLength={10} // Helper to stop typing after 10
+              maxLength={10} 
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
               className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
@@ -254,7 +314,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
               className="w-full flex items-center justify-center gap-2 py-2.5 border border-slate-200 border-dashed rounded-xl text-sm font-medium text-slate-500 hover:text-blue-600 hover:border-blue-300 hover:bg-slate-50 transition-all"
             >
               <Plus className="w-4 h-4" />
-              Add Drop Location {/* FIXED TEXT */}
+              Add Drop Location 
             </button>
           ) : (
             <div className="bg-slate-50/50 p-1 rounded-lg border border-slate-200 animate-in fade-in slide-in-from-top-2">
