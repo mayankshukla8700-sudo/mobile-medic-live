@@ -170,6 +170,26 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
         ]);
 
       if (error) throw error;
+
+      // --- TELEGRAM NOTIFICATION TRIGGER ---
+      try {
+        await fetch("/api/notify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: name,
+            phone: phone,
+            model: `${selectedBrand} ${selectedModel}`,
+            price: estimatedPrice,
+            date: finalDate,
+            address: finalAddressString,
+          }),
+        });
+      } catch (notifyErr) {
+        console.error("Notification failed, but booking saved.", notifyErr);
+      }
+      // -------------------------------------
+
       setSuccess(true);
       toast.success("Booking Confirmed!");
 
