@@ -385,7 +385,7 @@ export default function BrandPage() {
                     {/* IMAGE LOGIC */}
                     <div className="w-full h-28 relative flex flex-col items-center justify-center mb-2">
                        <img
-                          src={`/models/${brandSlug}/${toSlug(model)}.jpg`}
+                          src={`/phones/${brandSlug}/${toSlug(model)}.jpg`}
                           alt={model}
                           className="object-contain max-h-full max-w-full group-hover:scale-110 transition-transform duration-300"
                           onError={(e) => {
