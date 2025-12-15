@@ -40,12 +40,12 @@ export default function AdminBookingTable({ initialBookings }: { initialBookings
       .in('id', selectedIds);
 
     if (error) {
-      toast.error("Failed to delete");
+      toast.error("Database blocked the delete. Check Supabase RLS.");
+      console.error(error);
     } else {
       toast.success("Bookings Deleted!");
-      // Remove from screen immediately
-      setBookings(bookings.filter(b => !selectedIds.includes(b.id)));
-      setSelectedIds([]);
+      // FORCE RELOAD to update the Stats (Revenue/Count)
+      window.location.reload(); 
     }
     setLoading(false);
   };
