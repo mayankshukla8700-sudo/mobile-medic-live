@@ -1,19 +1,11 @@
 import { supabase } from "@/lib/supabase";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import StatusSelect from "./StatusSelect";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { Button } from "@/components/ui/button";
-import { MapPin, IndianRupee, ShoppingBag, Calendar, TrendingUp } from "lucide-react";
+import { IndianRupee, ShoppingBag, Calendar, TrendingUp } from "lucide-react";
+import AdminBookingTable from "@/components/ui/AdminBookingTable"; // Import our new table
 
-export const revalidate = 0;
+export const revalidate = 0; // Ensure data is always fresh
 
 export default async function AdminDashboard() {
   const cookieStore = await cookies();
@@ -45,7 +37,7 @@ export default async function AdminDashboard() {
   const totalRevenue = bookings?.reduce((acc, curr) => acc + (Number(curr.estimated_cost) || 0), 0) || 0;
 
   // Filter for TODAY
-  const today = new Date().toISOString().split('T')[0]; // "2024-03-20"
+  const today = new Date().toISOString().split('T')[0]; 
   const todaysBookings = bookings?.filter(b => b.created_at.startsWith(today)) || [];
   
   const todayOrders = todaysBookings.length;
@@ -68,113 +60,42 @@ export default async function AdminDashboard() {
 
         {/* --- MONEY STATS CARDS --- */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          
-          {/* Card 1: Today's Revenue */}
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Today's Revenue</p>
-                <h3 className="text-2xl font-extrabold text-slate-900 mt-1">₹{todayRevenue.toLocaleString()}</h3>
-              </div>
-              <div className="p-2 bg-green-100 text-green-600 rounded-lg">
-                <IndianRupee className="w-5 h-5" />
-              </div>
+            <div>
+               <p className="text-xs font-bold text-slate-500 uppercase">Today's Revenue</p>
+               <h3 className="text-2xl font-extrabold text-slate-900 mt-1">₹{todayRevenue.toLocaleString()}</h3>
             </div>
+            <div className="p-2 bg-green-100 text-green-600 rounded-lg w-fit mt-2"><IndianRupee className="w-5 h-5" /></div>
           </div>
 
-          {/* Card 2: Today's Orders */}
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Today's Orders</p>
-                <h3 className="text-2xl font-extrabold text-slate-900 mt-1">{todayOrders}</h3>
-              </div>
-              <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
-                <ShoppingBag className="w-5 h-5" />
-              </div>
+            <div>
+               <p className="text-xs font-bold text-slate-500 uppercase">Today's Orders</p>
+               <h3 className="text-2xl font-extrabold text-slate-900 mt-1">{todayOrders}</h3>
             </div>
+            <div className="p-2 bg-blue-100 text-blue-600 rounded-lg w-fit mt-2"><ShoppingBag className="w-5 h-5" /></div>
           </div>
 
-          {/* Card 3: Total Revenue */}
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Revenue</p>
-                <h3 className="text-2xl font-extrabold text-slate-900 mt-1">₹{totalRevenue.toLocaleString()}</h3>
-              </div>
-              <div className="p-2 bg-purple-100 text-purple-600 rounded-lg">
-                <TrendingUp className="w-5 h-5" />
-              </div>
+            <div>
+               <p className="text-xs font-bold text-slate-500 uppercase">Total Revenue</p>
+               <h3 className="text-2xl font-extrabold text-slate-900 mt-1">₹{totalRevenue.toLocaleString()}</h3>
             </div>
+            <div className="p-2 bg-purple-100 text-purple-600 rounded-lg w-fit mt-2"><TrendingUp className="w-5 h-5" /></div>
           </div>
 
-          {/* Card 4: Total Orders */}
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Orders</p>
-                <h3 className="text-2xl font-extrabold text-slate-900 mt-1">{totalOrders}</h3>
-              </div>
-              <div className="p-2 bg-orange-100 text-orange-600 rounded-lg">
-                <Calendar className="w-5 h-5" />
-              </div>
+            <div>
+               <p className="text-xs font-bold text-slate-500 uppercase">Total Orders</p>
+               <h3 className="text-2xl font-extrabold text-slate-900 mt-1">{totalOrders}</h3>
             </div>
+            <div className="p-2 bg-orange-100 text-orange-600 rounded-lg w-fit mt-2"><Calendar className="w-5 h-5" /></div>
           </div>
-
         </div>
 
-        {/* ORDER TABLE */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-slate-50">
-                  <TableHead>Date</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead className="min-w-[200px]">Address</TableHead>
-                  <TableHead>Device</TableHead>
-                  <TableHead>Issue</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {bookings?.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell className="whitespace-nowrap text-xs text-slate-500">
-                      {new Date(order.created_at).toLocaleDateString()}
-                      <div className="text-[10px] text-slate-400">
-                        {order.scheduled_date || "No Date"}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      <div>{order.customer_name}</div>
-                      <div className="text-xs text-slate-500">{order.phone_number}</div>
-                    </TableCell>
-                    <TableCell className="text-xs max-w-[250px]">
-                      <div className="flex gap-2">
-                          <MapPin className="w-4 h-4 text-blue-500 shrink-0" />
-                          <span className="line-clamp-3 leading-relaxed">
-                              {order.address || "No address provided"}
-                          </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-sm font-semibold">{order.device_model}</TableCell>
-                    <TableCell className="text-sm max-w-[150px] truncate" title={order.issue_description}>
-                        {order.issue_description}
-                    </TableCell>
-                    <TableCell className="text-green-600 font-bold whitespace-nowrap">
-                      ₹{order.estimated_cost}
-                    </TableCell>
-                    <TableCell>
-                      <StatusSelect id={order.id} initialStatus={order.status} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+        {/* NEW INTERACTIVE TABLE */}
+        <AdminBookingTable initialBookings={bookings || []} />
+
       </div>
     </div>
   );
