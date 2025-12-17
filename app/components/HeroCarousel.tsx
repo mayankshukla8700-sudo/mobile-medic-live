@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { ArrowRight, Star, ShieldCheck, Zap } from "lucide-react";
-import Link from "next/link";
 
 const slides = [
   {
@@ -31,11 +30,11 @@ const slides = [
     id: 3,
     bg: "bg-emerald-600",
     text: "text-white",
-    badge: "Fastest in Delhi",
+    badge: "Same Day Service",
     badgeColor: "bg-white/20 text-white",
-    title: "We Come To You in 30 Mins",
-    desc: "Home, office, or cafe. Our technicians fix your phone right in front of your eyes.",
-    cta: "Book Repair",
+    title: "Free Pickup & Drop Service",
+    desc: "We pick up your device, fix it at our lab with precision tools, and drop it back the same day.",
+    cta: "Book Pickup",
     icon: Zap
   }
 ];
