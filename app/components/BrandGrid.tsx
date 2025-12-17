@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function BrandGrid() {
-  // We use an object now to store both the Name and the Logo path
+  // Full list of brands matching your 'brands' folder
   const brands = [
     { name: "Apple", logo: "/brands/apple.png" },
     { name: "Samsung", logo: "/brands/samsung.png" },
@@ -11,6 +11,16 @@ export default function BrandGrid() {
     { name: "Xiaomi", logo: "/brands/xiaomi.png" },
     { name: "Google", logo: "/brands/google.png" },
     { name: "Oppo", logo: "/brands/oppo.png" },
+    { name: "Vivo", logo: "/brands/vivo.png" },
+    { name: "Realme", logo: "/brands/realme.png" },
+    { name: "Motorola", logo: "/brands/motorola.png" },
+    { name: "Nokia", logo: "/brands/nokia.png" },
+    { name: "Asus", logo: "/brands/asus.png" },
+    { name: "Poco", logo: "/brands/poco.png" },
+    { name: "iQOO", logo: "/brands/iqoo.png" },
+    { name: "Honor", logo: "/brands/honor.png" },
+    { name: "Infinix", logo: "/brands/infinix.png" },
+    { name: "Nothing", logo: "/brands/nothing.png" },
   ];
 
   return (
@@ -19,7 +29,8 @@ export default function BrandGrid() {
         Select Your Brand
       </h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {/* Added sm:grid-cols-4 to fit more brands nicely on larger screens */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {brands.map((brand) => (
           <Link key={brand.name} href={`/repair/${brand.name}`}>
             <Card className="cursor-pointer hover:shadow-lg transition-all border-2 hover:border-blue-600">
@@ -35,7 +46,7 @@ export default function BrandGrid() {
                 </div>
                 
                 {/* Brand Name */}
-                <span className="text-xl font-semibold text-slate-700">
+                <span className="text-lg font-semibold text-slate-700">
                   {brand.name}
                 </span>
               </CardContent>
