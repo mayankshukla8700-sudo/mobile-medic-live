@@ -29,14 +29,14 @@ export default function BrandGrid() {
         Select Your Brand
       </h2>
 
-      {/* Added sm:grid-cols-4 to fit more brands nicely on larger screens */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
         {brands.map((brand) => (
           <Link key={brand.name} href={`/repair/${brand.name}`}>
-            <Card className="cursor-pointer hover:shadow-lg transition-all border-2 hover:border-blue-600">
-              <CardContent className="flex flex-col items-center justify-center h-32 p-4">
-                {/* Brand Logo */}
-                <div className="relative w-12 h-12 mb-3">
+            <Card className="cursor-pointer hover:shadow-lg transition-all border-2 hover:border-blue-600 group">
+              {/* Removed fixed h-32, used padding for spacing */}
+              <CardContent className="flex flex-col items-center justify-center p-6">
+                {/* Brand Logo Container - Increased size to w-20 h-20 */}
+                <div className="relative w-20 h-20 mb-4 group-hover:scale-110 transition-transform">
                   <Image
                     src={brand.logo}
                     alt={`${brand.name} logo`}
