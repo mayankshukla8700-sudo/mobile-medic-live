@@ -1,7 +1,7 @@
-// FIX: Using "../" to find the components folder correctly
-import BrandGrid from "./components/BrandGrid";
-import HeroCarousel from "./components/HeroCarousel"; 
-import { Wrench, Battery, Shield, Zap } from "lucide-react";
+// FIX: Using the "Magic Path" (@) to find files instantly
+import BrandGrid from "@/app/components/BrandGrid"; 
+import HeroCarousel from "@/app/components/HeroCarousel"; 
+import { Wrench, Shield, Zap } from "lucide-react";
 
 export default function Home() {
   return (
@@ -10,7 +10,7 @@ export default function Home() {
       {/* 1. HERO SLIDER SECTION */}
       <HeroCarousel />
 
-      {/* 2. TRUST BADGES (Updated Text) */}
+      {/* 2. TRUST BADGES */}
       <section className="w-full bg-white border-b border-slate-100 py-8 shadow-sm relative z-20 -mt-2 rounded-t-3xl md:rounded-none">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-3 gap-2 md:gap-8 divide-x divide-slate-100">
           
@@ -47,7 +47,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. BRAND SELECTION */}
+      {/* 3. BRAND SELECTION (The Icons Live Here) */}
       <div id="brands-section" className="w-full max-w-7xl px-4 py-16 space-y-12">
         <div className="text-center space-y-4">
           <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
@@ -58,11 +58,11 @@ export default function Home() {
           </p>
         </div>
         
-        {/* The Icons will appear because we fixed the import path above */}
+        {/* THIS IS THE COMPONENT THAT SHOWS ICONS */}
         <BrandGrid />
       </div>
 
-      {/* 4. WHY CHOOSE US (Updated: No Fake Review, Pick & Drop Text) */}
+      {/* 4. WHY CHOOSE US (Text Removed as Requested) */}
       <section className="w-full bg-slate-900 text-white py-20 mt-10">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
@@ -82,13 +82,9 @@ export default function Home() {
             </ul>
           </div>
           <div className="relative h-[400px] bg-slate-800 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl flex items-center justify-center">
-             {/* Visual representation only - NO FAKE REVIEWS */}
+             {/* Clean Graphic - TEXT REMOVED */}
              <Wrench className="w-32 h-32 text-slate-700 opacity-50" />
              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
-             <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
-                <p className="font-bold text-white text-xl">Your Device, In Expert Hands.</p>
-                <p className="text-sm text-slate-400 mt-2">Professional Lab Repair</p>
-             </div>
           </div>
         </div>
       </section>
