@@ -81,10 +81,28 @@ export default function Home() {
             </ul>
           </div>
           
-          {/* FIXED: Replaced the wrench icon with a clean empty box */}
-          <div className="relative h-[400px] bg-slate-800 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl flex items-center justify-center">
-             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+          {/* OPTION 3: LIFETIME WARRANTY BOX */}
+          <div className="relative h-[400px] bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl flex flex-col items-center justify-center p-8 text-center">
+            <div className="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mb-6 ring-4 ring-blue-500/10">
+              <Shield className="w-12 h-12 text-blue-400" />
+            </div>
+            
+            <h3 className="text-2xl font-bold text-white mb-2">Lifetime Warranty</h3>
+            <p className="text-slate-400 mb-8 max-w-xs">We stand by our quality. If our part fails, we replace it for free.</p>
+            
+            <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
+              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <div className="text-2xl font-bold text-green-400">20k+</div>
+                <div className="text-xs text-slate-500">Devices Fixed</div>
+              </div>
+              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <div className="text-2xl font-bold text-yellow-400">4.9★</div>
+                <div className="text-xs text-slate-500">Google Rating</div>
+              </div>
+            </div>
           </div>
+          {/* END OPTION 3 */}
+
         </div>
       </section>
 
