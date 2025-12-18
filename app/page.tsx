@@ -87,7 +87,7 @@ export default function Home() {
               <Shield className="w-12 h-12 text-blue-400" />
             </div>
             
-            <h3 className="text-2xl font-bold text-white mb-2">Lifetime Warranty</h3>
+            <h3 className="text-2xl font-bold text-white mb-2">6 Months Warranty</h3>
             <p className="text-slate-400 mb-8 max-w-xs">We stand by our quality. If our part fails, we replace it for free.</p>
             
             <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
