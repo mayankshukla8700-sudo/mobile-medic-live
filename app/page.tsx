@@ -92,12 +92,12 @@ export default function Home() {
             
             <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="text-2xl font-bold text-green-400">20k+</div>
-                <div className="text-xs text-slate-500">Devices Fixed</div>
+                <div className="text-2xl font-bold text-green-400">Fast</div>
+                <div className="text-xs text-slate-500">Same Day Delivery</div>
               </div>
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="text-2xl font-bold text-yellow-400">4.9★</div>
-                <div className="text-xs text-slate-500">Google Rating</div>
+                <div className="text-2xl font-bold text-yellow-400">Reliable</div>
+                <div className="text-xs text-slate-500">Best In Budget</div>
               </div>
             </div>
           </div>
