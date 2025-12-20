@@ -78,9 +78,9 @@ export default function RootLayout({
                 className="hidden md:flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-bold shadow-sm transition-all active:scale-95"
               >
                 <Phone className="w-4 h-4 text-white fill-current" />
-                <span className="text-base tracking-wide">+91 8920766791</span>
+                <span className="text-base tracking-wide">+91 9354566791</span>
               </a>
-              <a href="tel:+918920766791" className="md:hidden bg-blue-600 text-white p-2.5 rounded-lg shadow-sm">
+              <a href="tel:+919354566791" className="md:hidden bg-blue-600 text-white p-2.5 rounded-lg shadow-sm">
                  <Phone className="w-5 h-5" />
               </a>
             </div>
