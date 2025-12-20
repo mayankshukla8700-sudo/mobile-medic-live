@@ -69,7 +69,7 @@ export default function AboutPage() {
                 <Phone className="w-6 h-6 text-blue-600 shrink-0 mt-1" />
                 <div>
                   <h4 className="font-semibold text-slate-900">Phone</h4>
-                  <p className="text-slate-600">+91 8920766791</p>
+                  <p className="text-slate-600">+91 9354566791</p>
                   <p className="text-xs text-slate-400">Mon - Sun (10 AM - 8 PM)</p>
                 </div>
               </div>
