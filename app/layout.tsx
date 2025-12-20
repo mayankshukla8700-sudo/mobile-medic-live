@@ -74,7 +74,7 @@ export default function RootLayout({
             {/* RIGHT: Call Button */}
             <div className="flex items-center gap-6">
                <a 
-                href="tel:+918920766791" 
+                href="tel:+919354566791" 
                 className="hidden md:flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-bold shadow-sm transition-all active:scale-95"
               >
                 <Phone className="w-4 h-4 text-white fill-current" />
