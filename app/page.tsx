@@ -1,5 +1,6 @@
 import BrandGrid from "./components/BrandGrid"; 
 import HeroCarousel from "./components/HeroCarousel"; 
+import HowItWorks from "./components/HowItWorks"; // IMPORTED HERE
 import { Wrench, Shield, Zap } from "lucide-react";
 
 export default function Home() {
@@ -57,12 +58,14 @@ export default function Home() {
           </p>
         </div>
         
-        {/* THIS IS THE COMPONENT THAT SHOWS ICONS */}
         <BrandGrid />
       </div>
 
-      {/* 4. WHY CHOOSE US */}
-      <section className="w-full bg-slate-900 text-white py-20 mt-10">
+      {/* 4. HOW IT WORKS (NEW SECTION) */}
+      <HowItWorks />
+
+      {/* 5. WHY CHOOSE US */}
+      <section className="w-full bg-slate-900 text-white py-20">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">Why Delhi Trusts <br/><span className="text-blue-400">The Mobile Medic</span></h2>
@@ -81,27 +84,25 @@ export default function Home() {
             </ul>
           </div>
           
-          {/* OPTION 3: LIFETIME WARRANTY BOX */}
           <div className="relative h-[400px] bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl flex flex-col items-center justify-center p-8 text-center">
             <div className="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mb-6 ring-4 ring-blue-500/10">
               <Shield className="w-12 h-12 text-blue-400" />
             </div>
             
-            <h3 className="text-2xl font-bold text-white mb-2">6 Months Warranty</h3>
+            <h3 className="text-2xl font-bold text-white mb-2">Lifetime Warranty</h3>
             <p className="text-slate-400 mb-8 max-w-xs">We stand by our quality. If our part fails, we replace it for free.</p>
             
             <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="text-2xl font-bold text-green-400">Fast</div>
-                <div className="text-xs text-slate-500">Same Day Delivery</div>
+                <div className="text-2xl font-bold text-green-400">20k+</div>
+                <div className="text-xs text-slate-500">Devices Fixed</div>
               </div>
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="text-2xl font-bold text-yellow-400">Reliable</div>
-                <div className="text-xs text-slate-500">Best In Budget</div>
+                <div className="text-2xl font-bold text-yellow-400">4.9★</div>
+                <div className="text-xs text-slate-500">Google Rating</div>
               </div>
             </div>
           </div>
-          {/* END OPTION 3 */}
 
         </div>
       </section>
