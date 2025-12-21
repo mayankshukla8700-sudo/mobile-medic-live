@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Toaster } from "sonner"; 
 import { Phone } from "lucide-react"; 
 import Footer from "./components/Footer"; 
-// ADDED: Import the WhatsApp Button
+// FIXED: Using ./ instead of @/ to prevent errors
 import WhatsAppButton from "./components/WhatsAppButton";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -15,21 +15,19 @@ export const metadata: Metadata = {
   title: "The Mobile Medic | Rated #1 Doorstep Repair",
   description: "Instant price quotes for iPhone, Samsung, & OnePlus. Expert technicians come to your home. 6 Months Warranty.",
   
-  // CRITICAL: This allows WhatsApp to find the image. 
-  // Make sure this matches your ACTUAL live Vercel link!
-  metadataBase: new URL('https://mobile-medic-live.vercel.app'), 
+  // UPDATED: Now pointing to your new domain for better Google ranking
+  metadataBase: new URL('https://www.themobilemedic.in'), 
   
   icons: {
     icon: "/logo.png", 
   },
   
-  // This tells WhatsApp to use the big card
   openGraph: {
     title: "The Mobile Medic | We Fix It Fast",
     description: "Broken Phone? Get it fixed at your doorstep in 30 mins.",
     images: [
       {
-        url: '/opengraph-image.png', // It looks for the file you put in the 'app' folder
+        url: '/opengraph-image.png',
         width: 1200,
         height: 630,
         alt: 'The Mobile Medic Repair Service',
@@ -97,7 +95,7 @@ export default function RootLayout({
         {/* --- FOOTER --- */}
         <Footer />
         
-        {/* ADDED: The Floating WhatsApp Button */}
+        {/* The Floating WhatsApp Button */}
         <WhatsAppButton />
 
         <Toaster />
