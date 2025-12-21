@@ -68,7 +68,7 @@ export default function Home() {
       <section className="w-full bg-slate-900 text-white py-20">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold">Why Delhi Trusts <br/><span className="text-blue-400">The Mobile Medic</span></h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Why Delhi and Mumbai Trusts <br/><span className="text-blue-400">The Mobile Medic</span></h2>
             <p className="text-slate-400 text-lg leading-relaxed">
               We know how busy you are. That is why we offer a hassle-free <strong>Pick & Drop Service</strong>. 
               We collect your device, repair it in our specialized lab with advanced tools, and deliver it 
@@ -89,17 +89,17 @@ export default function Home() {
               <Shield className="w-12 h-12 text-blue-400" />
             </div>
             
-            <h3 className="text-2xl font-bold text-white mb-2">Lifetime Warranty</h3>
+            <h3 className="text-2xl font-bold text-white mb-2">6 Months Warranty</h3>
             <p className="text-slate-400 mb-8 max-w-xs">We stand by our quality. If our part fails, we replace it for free.</p>
             
             <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="text-2xl font-bold text-green-400">20k+</div>
-                <div className="text-xs text-slate-500">Devices Fixed</div>
+                <div className="text-2xl font-bold text-green-400">We Fix Fast</div>
+                <div className="text-xs text-slate-500">Same Day Delivery</div>
               </div>
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="text-2xl font-bold text-yellow-400">4.9★</div>
-                <div className="text-xs text-slate-500">Google Rating</div>
+                <div className="text-2xl font-bold text-yellow-400">Reliable</div>
+                <div className="text-xs text-slate-500">Best in Budget</div>
               </div>
             </div>
           </div>
