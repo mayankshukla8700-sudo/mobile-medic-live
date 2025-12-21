@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Toaster } from "sonner"; 
 import { Phone } from "lucide-react"; 
 import Footer from "./components/Footer"; 
+// ADDED: Import the WhatsApp Button
+import WhatsAppButton from "./components/WhatsAppButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -95,6 +97,9 @@ export default function RootLayout({
         {/* --- FOOTER --- */}
         <Footer />
         
+        {/* ADDED: The Floating WhatsApp Button */}
+        <WhatsAppButton />
+
         <Toaster />
       </body>
     </html>
