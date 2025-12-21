@@ -57,7 +57,7 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-blue-500 shrink-0" />
                 <span>
-                  Uttam Nagar,<br />
+                  Bhajanpura,<br />
                   Delhi, India
                 </span>
               </li>
@@ -67,7 +67,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-blue-500 shrink-0" />
-                <a href="mailto:support@mobilemedic.in" className="hover:text-white transition-colors">support@mobilemedic.in</a>
+                <a href="mailto:support@mobilemedic.in" className="hover:text-white transition-colors">support@themobilemedic.in</a>
               </li>
             </ul>
           </div>

@@ -94,7 +94,7 @@ export default function Home() {
             
             <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="text-2xl font-bold text-green-400">We Fix Fast</div>
+                <div className="text-2xl font-bold text-green-400">Fast</div>
                 <div className="text-xs text-slate-500">Same Day Delivery</div>
               </div>
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
