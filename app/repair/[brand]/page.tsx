@@ -13,7 +13,7 @@ const toSlug = (text: string) => {
 };
 
 // ==============================================================================
-// 1. MASTER PRICING DATABASE (Your 44 Models from CSV)
+// 1. MASTER PRICING DATABASE
 // ==============================================================================
 const modelDatabase: Record<string, { [key: string]: number }> = {
   // --- Apple ---
@@ -274,6 +274,18 @@ const brandData: Record<string, string[]> = {
   ],
   nothing: [
     "Nothing Phone (2a)", "Nothing Phone (2)", "Nothing Phone (1)"
+  ],
+  nokia: [
+    "Nokia G42 5G", "Nokia C32", "Nokia C12", "Nokia G21", "Nokia X30 5G", "Nokia G11 Plus"
+  ],
+  asus: [
+    "ROG Phone 8 Pro", "ROG Phone 7", "ROG Phone 6", "Zenfone 10", "Zenfone 9", "Zenfone Max Pro M2", "Zenfone Max Pro M1"
+  ],
+  honor: [
+    "Honor 90", "Honor X9b", "Honor Magic 6 Pro", "Honor X9a", "Honor 9X"
+  ],
+  infinix: [
+    "Infinix Note 40 Pro", "Infinix GT 20 Pro", "Infinix GT 10 Pro", "Infinix Zero 30", "Infinix Note 30 5G", "Infinix Hot 40i", "Infinix Smart 8"
   ]
 };
 
@@ -384,7 +396,7 @@ export default function BrandPage() {
                   >
                     {/* IMAGE LOGIC */}
                     <div className="w-full h-28 relative flex flex-col items-center justify-center mb-2">
-                       <img
+                        <img
                           src={`/phones/${brandSlug}/${toSlug(model)}.jpg`}
                           alt={model}
                           className="object-contain max-h-full max-w-full group-hover:scale-110 transition-transform duration-300"
@@ -470,7 +482,7 @@ export default function BrandPage() {
                       </div>
                     ) : (
                       <div className="animate-in slide-in-from-right duration-300">
-                         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-4">
+                          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-4">
                             <div className="flex justify-between items-center mb-4 border-b pb-4">
                               <h3 className="font-bold text-slate-900">Booking Summary</h3>
                               <button onClick={() => setShowForm(false)} className="text-xs text-blue-600 underline">Edit</button>
@@ -486,16 +498,16 @@ export default function BrandPage() {
                               <span>Total Estimate</span>
                               <span>₹{getTotalPrice()}</span>
                             </div>
-                         </div>
+                          </div>
 
-                         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                             <RepairForm 
                               selectedBrand={brandName} 
                               selectedModel={model} 
                               selectedIssues={cart}
                               estimatedPrice={getTotalPrice()}
                             />
-                         </div>
+                          </div>
                       </div>
                     )}
 
