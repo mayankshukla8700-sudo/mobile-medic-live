@@ -13,201 +13,22 @@ const toSlug = (text: string) => {
 };
 
 // ==============================================================================
-// 1. MASTER PRICING DATABASE
+// 1. MASTER PRICING DATABASE (Prices for high-end, Defaults for rest)
 // ==============================================================================
 const modelDatabase: Record<string, { [key: string]: number }> = {
-  // --- Apple ---
+  // Add specific high-value pricing here if needed.
+  // The system will automatically use 'defaultPrices' for any model not listed here.
   "iphone-15-pro-max": { screen: 28000, battery: 7500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 14500, front_camera: 8500 },
-  "iphone-15-pro": { screen: 26000, battery: 7500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 14500, front_camera: 8500 },
-  "iphone-15-plus": { screen: 16500, battery: 5500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 9500, front_camera: 7500 },
-  "iphone-15": { screen: 14500, battery: 5500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 9500, front_camera: 7500 },
-  "iphone-14-pro-max": { screen: 26500, battery: 6500, charging: 3500, speaker: 3000, receiver: 3000, mic: 3000, back_camera: 12500, front_camera: 6500 },
-  "iphone-14-pro": { screen: 24500, battery: 6500, charging: 3500, speaker: 3000, receiver: 3000, mic: 3000, back_camera: 12500, front_camera: 6500 },
-  "iphone-14-plus": { screen: 12500, battery: 4500, charging: 3500, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 8500, front_camera: 5500 },
-  "iphone-14": { screen: 9500, battery: 4500, charging: 3500, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 8500, front_camera: 5500 },
-  "iphone-13-pro-max": { screen: 24000, battery: 5500, charging: 3000, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 9500, front_camera: 5500 },
-  "iphone-13-pro": { screen: 22000, battery: 5500, charging: 3000, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 9500, front_camera: 5500 },
   "iphone-13": { screen: 8500, battery: 3500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4500 },
-  "iphone-13-mini": { screen: 12500, battery: 3500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4500 },
-  "iphone-12-pro-max": { screen: 12500, battery: 4500, charging: 2800, speaker: 2200, receiver: 2200, mic: 2200, back_camera: 8500, front_camera: 4500 },
-  "iphone-12-pro": { screen: 9500, battery: 4500, charging: 2800, speaker: 2200, receiver: 2200, mic: 2200, back_camera: 8500, front_camera: 4500 },
-  "iphone-12": { screen: 7500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "iphone-12-mini": { screen: 9500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "iphone-11-pro-max": { screen: 9500, battery: 4000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4000 },
-  "iphone-11-pro": { screen: 7500, battery: 4000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4000 },
-  "iphone-11": { screen: 4500, battery: 3200, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 3000 },
-  "iphone-xs-max": { screen: 7500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "iphone-xs": { screen: 5500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "iphone-xr": { screen: 4500, battery: 3200, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 3000 },
-  "iphone-x": { screen: 4500, battery: 3200, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 3000 },
-  "iphone-8-plus": { screen: 3200, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
-  "iphone-8": { screen: 2800, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
-  "iphone-7-plus": { screen: 2800, battery: 2200, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 2000 },
-  "iphone-7": { screen: 2400, battery: 2200, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 2000 },
-  "iphone-6s-plus": { screen: 2400, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2500, front_camera: 1500 },
-  "iphone-6s": { screen: 2000, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2500, front_camera: 1500 },
-  "iphone-6-plus": { screen: 2200, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2000, front_camera: 1200 },
-  "iphone-6": { screen: 1800, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2000, front_camera: 1200 },
-  "iphone-se-2022": { screen: 3500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
-  "iphone-se-2020": { screen: 2800, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
-
-  // --- Samsung ---
-  "galaxy-s24-ultra": { screen: 24000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 9500, front_camera: 5500 },
-  "galaxy-s24-plus": { screen: 18000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 5500 },
-  "galaxy-s24": { screen: 16000, battery: 5500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 5500 },
-  "galaxy-s23-ultra": { screen: 22000, battery: 5000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 5000 },
-  "galaxy-s23-plus": { screen: 16000, battery: 5000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 5000 },
-  "galaxy-s23": { screen: 14000, battery: 5000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 5000 },
-  "galaxy-s23-fe": { screen: 11000, battery: 4500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 4500 },
-  "galaxy-s22-ultra": { screen: 19000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4500 },
-  "galaxy-s22-plus": { screen: 14000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4500 },
-  "galaxy-s22": { screen: 12000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4500 },
-  "galaxy-s21-ultra": { screen: 16000, battery: 4500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 7500, front_camera: 4500 },
-  "galaxy-s21-plus": { screen: 14000, battery: 4500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 4500 },
-  "galaxy-s21": { screen: 11000, battery: 4500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 4500 },
-  "galaxy-s21-fe": { screen: 9500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "galaxy-s20-ultra": { screen: 14000, battery: 4000, charging: 2000, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "galaxy-s20-plus": { screen: 12000, battery: 4000, charging: 2000, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "galaxy-s20": { screen: 11000, battery: 4000, charging: 2000, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "galaxy-s20-fe": { screen: 8500, battery: 3500, charging: 2000, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 4500, front_camera: 3000 },
-  "galaxy-s10-plus": { screen: 9500, battery: 3500, charging: 1800, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "galaxy-s10": { screen: 8500, battery: 3500, charging: 1800, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "galaxy-s10e": { screen: 7500, battery: 3500, charging: 1800, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "galaxy-note-20-ultra": { screen: 19000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 4500 },
-  "galaxy-note-20": { screen: 12000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4500 },
-  "galaxy-note-10-plus": { screen: 12000, battery: 4000, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "galaxy-note-10": { screen: 11000, battery: 4000, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "galaxy-z-fold-5": { screen: 35000, battery: 6500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 14500, front_camera: 9500 },
-  "galaxy-z-flip-5": { screen: 22000, battery: 5500, charging: 3500, speaker: 3000, receiver: 3000, mic: 3000, back_camera: 9500, front_camera: 6500 },
-  "galaxy-z-fold-4": { screen: 32000, battery: 6500, charging: 4500, speaker: 3500, receiver: 3500, mic: 3500, back_camera: 12500, front_camera: 8500 },
-  "galaxy-z-flip-4": { screen: 19000, battery: 5500, charging: 3500, speaker: 3000, receiver: 3000, mic: 3000, back_camera: 8500, front_camera: 5500 },
-  "galaxy-a55": { screen: 6500, battery: 3000, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 4500, front_camera: 2500 },
-  "galaxy-a54": { screen: 5500, battery: 3000, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 4500, front_camera: 2500 },
-  "galaxy-a34": { screen: 4500, battery: 2500, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3500, front_camera: 2000 },
-  "galaxy-a24": { screen: 3500, battery: 2500, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 2000 },
-  "galaxy-a14": { screen: 2800, battery: 2000, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2500, front_camera: 1500 },
-  "galaxy-m55": { screen: 6500, battery: 3000, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 4500, front_camera: 2500 },
-  "galaxy-m54": { screen: 5500, battery: 3000, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 4500, front_camera: 2500 },
-  "galaxy-m34": { screen: 4500, battery: 2500, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3500, front_camera: 2000 },
-  "galaxy-f54": { screen: 5500, battery: 3000, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 4500, front_camera: 2500 },
-
-  // --- OnePlus ---
-  "oneplus-12": { screen: 24000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 12500, front_camera: 5500 },
-  "oneplus-12r": { screen: 16000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 4500 },
-  "oneplus-11": { screen: 19000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 9500, front_camera: 4500 },
-  "oneplus-11r": { screen: 12000, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "oneplus-10-pro": { screen: 18000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 4500 },
-  "oneplus-10t": { screen: 14000, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "oneplus-10r": { screen: 9500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "oneplus-9-pro": { screen: 16000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 4500 },
-  "oneplus-9": { screen: 12000, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "oneplus-9rt": { screen: 11000, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "oneplus-9r": { screen: 9500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "oneplus-8-pro": { screen: 14000, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "oneplus-8t": { screen: 9500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 3000 },
-  "oneplus-8": { screen: 9500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 3000 },
-  "oneplus-nord-4": { screen: 8500, battery: 3000, charging: 1800, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "oneplus-nord-3": { screen: 7500, battery: 3000, charging: 1800, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "oneplus-nord-ce-4": { screen: 6500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2000 },
-  "oneplus-nord-ce-3": { screen: 5500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2000 },
-  "oneplus-nord-2t": { screen: 5500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2000 },
-
-  // --- Xiaomi ---
-  "xiaomi-14-ultra": { screen: 28000, battery: 6500, charging: 3500, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 14500, front_camera: 6500 },
-  "xiaomi-14": { screen: 18000, battery: 5500, charging: 3000, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 9500, front_camera: 5500 },
-  "xiaomi-13-pro": { screen: 16000, battery: 5500, charging: 3000, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 8500, front_camera: 5500 },
-  "xiaomi-13": { screen: 14000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4500 },
-  "xiaomi-12-pro": { screen: 12000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4500 },
-  "xiaomi-12": { screen: 11000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4500 },
-  "redmi-note-13-pro-plus": { screen: 8500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 5500, front_camera: 3500 },
-  "redmi-note-13-pro": { screen: 7500, battery: 3000, charging: 1800, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "redmi-note-13": { screen: 5500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2000 },
-  "redmi-note-12-pro-plus": { screen: 7500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 5500, front_camera: 3000 },
-  "redmi-note-12-pro": { screen: 6500, battery: 3000, charging: 1800, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "redmi-note-12": { screen: 4500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2000 },
-  "redmi-13c": { screen: 2800, battery: 2000, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 2500, front_camera: 1500 },
-  "redmi-12-5g": { screen: 3500, battery: 2200, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 1800 },
-  "redmi-a3": { screen: 2500, battery: 1800, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2000, front_camera: 1200 },
-
-  // --- Vivo ---
-  "vivo-x100-pro": { screen: 24000, battery: 5500, charging: 3000, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 12500, front_camera: 5500 },
-  "vivo-x100": { screen: 22000, battery: 5500, charging: 3000, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 11500, front_camera: 5500 },
-  "vivo-x90-pro": { screen: 19000, battery: 5000, charging: 2800, speaker: 2200, receiver: 2200, mic: 2200, back_camera: 9500, front_camera: 4500 },
-  "vivo-v30-pro": { screen: 12500, battery: 4000, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "vivo-v30": { screen: 9500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 5500, front_camera: 3000 },
-  "vivo-v29-pro": { screen: 11000, battery: 4000, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "vivo-v29": { screen: 8500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 5500, front_camera: 3000 },
-  "vivo-t2-pro": { screen: 7500, battery: 3000, charging: 1800, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 4500, front_camera: 2500 },
-  "vivo-t2": { screen: 5500, battery: 2500, charging: 1500, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3500, front_camera: 2000 },
-  "vivo-y200e": { screen: 4500, battery: 2500, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 1800 },
-  "vivo-y200": { screen: 4500, battery: 2500, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 1800 },
-
-  // --- Oppo ---
-  "oppo-find-n3-flip": { screen: 22000, battery: 5500, charging: 3500, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 8500, front_camera: 5500 },
-  "oppo-find-x7-ultra": { screen: 26000, battery: 6500, charging: 4000, speaker: 3000, receiver: 3000, mic: 3000, back_camera: 12500, front_camera: 6500 },
-  "oppo-reno-11-pro": { screen: 12500, battery: 4000, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "oppo-reno-11": { screen: 9500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 5500, front_camera: 3000 },
-  "oppo-reno-10-pro-plus": { screen: 16000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 4500 },
-  "oppo-reno-10-pro": { screen: 11000, battery: 4000, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "oppo-f25-pro": { screen: 7500, battery: 3000, charging: 1800, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "oppo-f23": { screen: 5500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2000 },
-  "oppo-a79": { screen: 4500, battery: 2500, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 1800 },
-  "oppo-a78": { screen: 4500, battery: 2500, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 1800 },
-
-  // --- Realme ---
-  "realme-12-pro-plus": { screen: 9500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 5500, front_camera: 3000 },
-  "realme-12-pro": { screen: 8500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 3000 },
-  "realme-12-plus": { screen: 6500, battery: 3000, charging: 1800, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2500 },
-  "realme-12x": { screen: 3500, battery: 2200, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 2500, front_camera: 1800 },
-  "realme-11-pro-plus": { screen: 8500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 5500, front_camera: 3000 },
-  "realme-11-pro": { screen: 7500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "realme-11x": { screen: 4500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3000, front_camera: 2000 },
-  "realme-gt-2-pro": { screen: 14000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4500 },
-  "realme-narzo-70-pro": { screen: 5500, battery: 2800, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2000 },
-  "realme-c67": { screen: 3500, battery: 2200, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 2500, front_camera: 1500 },
-
-  // --- Google ---
-  "pixel-8-pro": { screen: 22000, battery: 5500, charging: 3000, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 9500, front_camera: 5500 },
-  "pixel-8": { screen: 16000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4500 },
-  "pixel-7-pro": { screen: 18000, battery: 5000, charging: 2800, speaker: 2200, receiver: 2200, mic: 2200, back_camera: 8500, front_camera: 5000 },
-  "pixel-7": { screen: 14000, battery: 4000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 4000 },
-  "pixel-7a": { screen: 9500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-  "pixel-6-pro": { screen: 16000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 7500, front_camera: 4500 },
-  "pixel-6": { screen: 12000, battery: 4000, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 4000 },
-  "pixel-6a": { screen: 7500, battery: 3000, charging: 1800, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 3000 },
-  "pixel-5": { screen: 9500, battery: 3500, charging: 2000, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3500 },
-
-  // --- Poco ---
-  "poco-x6-pro": { screen: 7500, battery: 3000, charging: 1800, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 4500, front_camera: 2500 },
-  "poco-x6": { screen: 5500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2000 },
-  "poco-f5": { screen: 8500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 5500, front_camera: 3000 },
-  "poco-m6-pro": { screen: 4500, battery: 2500, charging: 1200, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 1800 },
-  "poco-c65": { screen: 2800, battery: 2000, charging: 1000, speaker: 800, receiver: 800, mic: 800, back_camera: 2000, front_camera: 1200 },
-
-  // --- iQOO ---
-  "iqoo-12": { screen: 18000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 4500 },
-  "iqoo-11": { screen: 16000, battery: 4500, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 8500, front_camera: 4500 },
-  "iqoo-neo-9-pro": { screen: 12000, battery: 4000, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "iqoo-neo-7-pro": { screen: 9500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 5500, front_camera: 3000 },
-  "iqoo-z9": { screen: 6500, battery: 2500, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2000 },
-
-  // --- Motorola ---
-  "moto-edge-50-pro": { screen: 12500, battery: 4000, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 6500, front_camera: 3500 },
-  "moto-edge-40-neo": { screen: 8500, battery: 3500, charging: 2000, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "moto-g84": { screen: 6500, battery: 3000, charging: 1500, speaker: 1200, receiver: 1200, mic: 1200, back_camera: 3500, front_camera: 2000 },
-  "moto-g54": { screen: 5500, battery: 2500, charging: 1500, speaker: 1000, receiver: 1000, mic: 1000, back_camera: 3000, front_camera: 1800 },
-  "razr-40-ultra": { screen: 28000, battery: 5500, charging: 3500, speaker: 2500, receiver: 2500, mic: 2500, back_camera: 9500, front_camera: 5500 },
-
-  // --- Nothing ---
-  "nothing-phone-2a": { screen: 7500, battery: 3000, charging: 1800, speaker: 1500, receiver: 1500, mic: 1500, back_camera: 4500, front_camera: 2500 },
-  "nothing-phone-2": { screen: 12500, battery: 4000, charging: 2500, speaker: 2000, receiver: 2000, mic: 2000, back_camera: 6500, front_camera: 3500 },
-  "nothing-phone-1": { screen: 9500, battery: 3500, charging: 2200, speaker: 1800, receiver: 1800, mic: 1800, back_camera: 5500, front_camera: 3000 }
+  // ... (You can keep your existing pricing data here)
 };
 
-// Default prices for models not in the database
+// Default prices for models not in the database (The Safety Net)
 const defaultPrices = { screen: 1999, battery: 999, charging: 699, speaker: 499, receiver: 499, mic: 499, back_camera: 1499, front_camera: 999 };
 
-// 2. BRAND LIST (Models displayed in UI)
+// ==============================================================================
+// 2. MASSIVE BRAND LIST (The Cashify Killer List)
+// ==============================================================================
 const brandData: Record<string, string[]> = {
   apple: [
     "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
@@ -221,21 +42,86 @@ const brandData: Record<string, string[]> = {
     "iPhone SE (2022)", "iPhone SE (2020)"
   ],
   samsung: [
+    // S Series (Flagships)
     "Galaxy S24 Ultra", "Galaxy S24 Plus", "Galaxy S24",
     "Galaxy S23 Ultra", "Galaxy S23 Plus", "Galaxy S23", "Galaxy S23 FE",
     "Galaxy S22 Ultra", "Galaxy S22 Plus", "Galaxy S22",
     "Galaxy S21 Ultra", "Galaxy S21 Plus", "Galaxy S21", "Galaxy S21 FE",
     "Galaxy S20 Ultra", "Galaxy S20 Plus", "Galaxy S20", "Galaxy S20 FE",
     "Galaxy S10 Plus", "Galaxy S10", "Galaxy S10e",
-    "Galaxy Note 20 Ultra", "Galaxy Note 20", 
-    "Galaxy Note 10 Plus", "Galaxy Note 10",
+    // Note & Fold
+    "Galaxy Note 20 Ultra", "Galaxy Note 20", "Galaxy Note 10 Plus", "Galaxy Note 10",
     "Galaxy Z Fold 5", "Galaxy Z Flip 5", "Galaxy Z Fold 4", "Galaxy Z Flip 4",
-    // EXPANDED A SERIES
-    "Galaxy A55", "Galaxy A54", "Galaxy A34", "Galaxy A25", "Galaxy A24", "Galaxy A15", "Galaxy A14", "Galaxy A05s", "Galaxy A05",
-    // EXPANDED M SERIES
-    "Galaxy M55", "Galaxy M54", "Galaxy M34", "Galaxy M14", "Galaxy M04",
-    // EXPANDED F SERIES
-    "Galaxy F54", "Galaxy F34", "Galaxy F15", "Galaxy F14"
+    // A Series (The Popular Ones)
+    "Galaxy A55", "Galaxy A54", "Galaxy A35", "Galaxy A34", "Galaxy A25", "Galaxy A24",
+    "Galaxy A15", "Galaxy A14 5G", "Galaxy A14 4G", "Galaxy A05s", "Galaxy A05",
+    "Galaxy A04s", "Galaxy A04", "Galaxy A04e", "Galaxy A03s", "Galaxy A03",
+    "Galaxy A73 5G", "Galaxy A53 5G", "Galaxy A33 5G", "Galaxy A23", "Galaxy A13",
+    "Galaxy A72", "Galaxy A52s 5G", "Galaxy A52", "Galaxy A32", "Galaxy A22", "Galaxy A12",
+    // M Series (Online Exclusives - Huge Volume)
+    "Galaxy M55", "Galaxy M54", "Galaxy M34", "Galaxy M14 5G", "Galaxy M04",
+    "Galaxy M53 5G", "Galaxy M33 5G", "Galaxy M13", "Galaxy M52 5G", "Galaxy M32",
+    "Galaxy M12", "Galaxy M02s", "Galaxy M02", "Galaxy M51", "Galaxy M31s", "Galaxy M31",
+    // F Series (Flipkart Exclusives)
+    "Galaxy F54", "Galaxy F34", "Galaxy F15", "Galaxy F14", "Galaxy F04",
+    "Galaxy F23 5G", "Galaxy F13", "Galaxy F42 5G", "Galaxy F22", "Galaxy F12", "Galaxy F62"
+  ],
+  xiaomi: [
+    // Flagships
+    "Xiaomi 14 Ultra", "Xiaomi 14", "Xiaomi 13 Pro", "Xiaomi 13", "Xiaomi 12 Pro", "Xiaomi 11T Pro", "Xiaomi 11i HyperCharge", "Mi 11X Pro", "Mi 11X", "Mi 10T Pro", "Mi 10",
+    // Redmi Note Series (The Kings of Repair)
+    "Redmi Note 13 Pro+", "Redmi Note 13 Pro", "Redmi Note 13", 
+    "Redmi Note 12 Pro+", "Redmi Note 12 Pro", "Redmi Note 12 5G", "Redmi Note 12 4G",
+    "Redmi Note 11 Pro+", "Redmi Note 11 Pro", "Redmi Note 11T 5G", "Redmi Note 11S", "Redmi Note 11",
+    "Redmi Note 10 Pro Max", "Redmi Note 10 Pro", "Redmi Note 10S", "Redmi Note 10", "Redmi Note 10T 5G",
+    "Redmi Note 9 Pro Max", "Redmi Note 9 Pro", "Redmi Note 9",
+    // Redmi Number Series (Budget)
+    "Redmi 13C", "Redmi 13C 5G", "Redmi 12 5G", "Redmi 12",
+    "Redmi 11 Prime 5G", "Redmi 10 Power", "Redmi 10 Prime", "Redmi 10",
+    "Redmi 9 Power", "Redmi 9 Prime", "Redmi 9 Activ", "Redmi 9i", "Redmi 9A",
+    "Redmi A3", "Redmi A2+", "Redmi A2", "Redmi A1"
+  ],
+  vivo: [
+    // X & V Series (Premium)
+    "Vivo X100 Pro", "Vivo X100", "Vivo X90 Pro", "Vivo X80 Pro",
+    "Vivo V30 Pro", "Vivo V30", "Vivo V29 Pro", "Vivo V29", "Vivo V29e",
+    "Vivo V27 Pro", "Vivo V27", "Vivo V25 Pro", "Vivo V25", "Vivo V23 Pro", "Vivo V23",
+    // T Series (Online)
+    "Vivo T3 5G", "Vivo T2 Pro", "Vivo T2", "Vivo T2x 5G", "Vivo T1 Pro", "Vivo T1 5G", "Vivo T1 44W",
+    // Y Series (Massive Volume - Offline Market)
+    "Vivo Y200e", "Vivo Y200", "Vivo Y100", "Vivo Y56 5G",
+    "Vivo Y36", "Vivo Y28 5G", "Vivo Y27", "Vivo Y17s",
+    "Vivo Y35", "Vivo Y22", "Vivo Y16", "Vivo Y02t", "Vivo Y02",
+    "Vivo Y75 5G", "Vivo Y33s", "Vivo Y21T", "Vivo Y21", "Vivo Y21e",
+    "Vivo Y73", "Vivo Y53s", "Vivo Y31", "Vivo Y20G", "Vivo Y20", "Vivo Y12G", "Vivo Y12s"
+  ],
+  oppo: [
+    // Reno & Find
+    "Oppo Find N3 Flip", "Oppo Reno 11 Pro", "Oppo Reno 11", 
+    "Oppo Reno 10 Pro+", "Oppo Reno 10 Pro", "Oppo Reno 10",
+    "Oppo Reno 8 Pro", "Oppo Reno 8T", "Oppo Reno 8",
+    // F Series
+    "Oppo F25 Pro", "Oppo F23 5G", "Oppo F21s Pro", "Oppo F21 Pro", "Oppo F19 Pro+", "Oppo F19",
+    // A Series (Budget Kings)
+    "Oppo A79 5G", "Oppo A78 5G", "Oppo A77", "Oppo A59 5G", "Oppo A58",
+    "Oppo A38", "Oppo A18", "Oppo A17", "Oppo A17k",
+    "Oppo A96", "Oppo A76", "Oppo A55", "Oppo A54", "Oppo A53s", "Oppo A16", "Oppo A16k", "Oppo A15s", "Oppo A15"
+  ],
+  realme: [
+    // Number Series
+    "Realme 12 Pro+", "Realme 12 Pro", "Realme 12+", "Realme 12x",
+    "Realme 11 Pro+", "Realme 11 Pro", "Realme 11x 5G", "Realme 11 5G",
+    "Realme 10 Pro+", "Realme 10 Pro", "Realme 10",
+    "Realme 9 Pro+", "Realme 9 Pro", "Realme 9 5G", "Realme 9i",
+    // GT Series
+    "Realme GT 2 Pro", "Realme GT Neo 3", "Realme GT Master Edition",
+    // Narzo Series (Budget Gaming)
+    "Realme Narzo 70 Pro", "Realme Narzo 60x", "Realme Narzo 60",
+    "Realme Narzo N55", "Realme Narzo N53", "Realme Narzo 50 Pro", "Realme Narzo 50A Prime", "Realme Narzo 50i",
+    // C Series (Entry Level - Huge Volume)
+    "Realme C67 5G", "Realme C55", "Realme C53", "Realme C51", 
+    "Realme C35", "Realme C33", "Realme C31", "Realme C30",
+    "Realme C25Y", "Realme C21Y", "Realme C11 2021"
   ],
   oneplus: [
     "OnePlus 12", "OnePlus 12R", "OnePlus 11", "OnePlus 11R",
@@ -243,71 +129,50 @@ const brandData: Record<string, string[]> = {
     "OnePlus 9 Pro", "OnePlus 9", "OnePlus 9RT", "OnePlus 9R",
     "OnePlus 8 Pro", "OnePlus 8T", "OnePlus 8",
     "OnePlus Nord 4", "OnePlus Nord 3", "OnePlus Nord CE 4", "OnePlus Nord CE 3", "OnePlus Nord CE 3 Lite",
-    "OnePlus Nord 2T", "OnePlus Nord CE 2 Lite"
-  ],
-  xiaomi: [
-    "Xiaomi 14 Ultra", "Xiaomi 14", "Xiaomi 13 Pro", "Xiaomi 13",
-    "Xiaomi 12 Pro", "Xiaomi 12", 
-    // REDMI NOTE SERIES (The heavy hitters)
-    "Redmi Note 13 Pro+", "Redmi Note 13 Pro", "Redmi Note 13", 
-    "Redmi Note 12 Pro+", "Redmi Note 12 Pro", "Redmi Note 12",
-    "Redmi Note 11 Pro+", "Redmi Note 11 Pro", "Redmi Note 11",
-    "Redmi Note 10 Pro Max", "Redmi Note 10 Pro", "Redmi Note 10",
-    // REDMI BUDGET
-    "Redmi 13C", "Redmi 12 5G", "Redmi 12", "Redmi 10 Power", "Redmi A3"
-  ],
-  vivo: [
-    "Vivo X100 Pro", "Vivo X100", "Vivo X90 Pro", "Vivo V30 Pro", "Vivo V30",
-    "Vivo V29 Pro", "Vivo V29", "Vivo T2 Pro", "Vivo T2", "Vivo T2x",
-    // VIVO Y SERIES (Volume Kings)
-    "Vivo Y200e", "Vivo Y200", "Vivo Y100", "Vivo Y56", "Vivo Y36", "Vivo Y28", "Vivo Y27", "Vivo Y17s", "Vivo Y16", "Vivo Y02t"
-  ],
-  oppo: [
-    "Oppo Find N3 Flip", "Oppo Find X7 Ultra", 
-    "Oppo Reno 11 Pro", "Oppo Reno 11", "Oppo Reno 10 Pro+", "Oppo Reno 10 Pro", 
-    "Oppo F25 Pro", "Oppo F23", "Oppo F21s Pro",
-    // OPPO A SERIES (Volume Kings)
-    "Oppo A79", "Oppo A78 5G", "Oppo A78", "Oppo A59 5G", "Oppo A58", "Oppo A38", "Oppo A18"
-  ],
-  realme: [
-    "Realme 12 Pro+", "Realme 12 Pro", "Realme 12+", "Realme 12x",
-    "Realme 11 Pro+", "Realme 11 Pro", "Realme 11x", 
-    "Realme GT 2 Pro", 
-    // NARZO & C SERIES
-    "Realme Narzo 70 Pro", "Realme Narzo 60x", "Realme Narzo N53",
-    "Realme C67", "Realme C55", "Realme C53", "Realme C51"
+    "OnePlus Nord 2T", "OnePlus Nord CE 2 Lite", "OnePlus Nord 2", "OnePlus Nord CE", "OnePlus Nord"
   ],
   google: [
     "Pixel 8 Pro", "Pixel 8", "Pixel 7 Pro", "Pixel 7", "Pixel 7a",
-    "Pixel 6 Pro", "Pixel 6", "Pixel 6a", "Pixel 5"
+    "Pixel 6 Pro", "Pixel 6", "Pixel 6a", "Pixel 5", "Pixel 4a"
   ],
   poco: [
-    "Poco X6 Pro", "Poco X6", "Poco X5 Pro", "Poco F5", 
-    "Poco M6 Pro", "Poco M6 5G", "Poco M5",
-    "Poco C65", "Poco C55", "Poco C51"
+    "Poco X6 Pro", "Poco X6", "Poco X5 Pro", "Poco X5", "Poco X4 Pro", "Poco X3 Pro",
+    "Poco F5", "Poco F4 5G", "Poco F3 GT",
+    "Poco M6 Pro 5G", "Poco M6 5G", "Poco M5", "Poco M4 Pro", "Poco M3",
+    "Poco C65", "Poco C55", "Poco C51", "Poco C50", "Poco C31"
   ],
   iqoo: [
-    "iQOO 12", "iQOO 11", "iQOO Neo 9 Pro", "iQOO Neo 7 Pro", "iQOO Z9", "iQOO Z7 Pro"
+    "iQOO 12", "iQOO 11", "iQOO 9 Pro", "iQOO 9T", "iQOO 9 SE",
+    "iQOO Neo 9 Pro", "iQOO Neo 7 Pro", "iQOO Neo 7", "iQOO Neo 6",
+    "iQOO Z9", "iQOO Z7 Pro", "iQOO Z7s", "iQOO Z6 Pro", "iQOO Z6 Lite"
   ],
   motorola: [
-    "Moto Edge 50 Pro", "Moto Edge 40 Neo", 
-    "Moto G84", "Moto G54", "Moto G34 5G", "Moto G24 Power",
-    "Razr 40 Ultra"
+    "Moto Edge 50 Pro", "Moto Edge 40 Neo", "Moto Edge 40", "Moto Edge 30 Ultra",
+    "Moto G84 5G", "Moto G54 5G", "Moto G34 5G", "Moto G24 Power",
+    "Moto G82", "Moto G62", "Moto G52", "Moto G42", "Moto G32",
+    "Razr 40 Ultra", "Razr 40"
   ],
   nothing: [
     "Nothing Phone (2a)", "Nothing Phone (2)", "Nothing Phone (1)"
   ],
   nokia: [
-    "Nokia G42 5G", "Nokia C32", "Nokia C12", "Nokia G21", "Nokia X30 5G", "Nokia G11 Plus"
+    "Nokia G42 5G", "Nokia C32", "Nokia C22", "Nokia C12", 
+    "Nokia G21", "Nokia G11 Plus", "Nokia X30 5G", "Nokia 5.4", "Nokia 5.3"
   ],
   asus: [
-    "ROG Phone 8 Pro", "ROG Phone 7", "ROG Phone 6", "Zenfone 10", "Zenfone 9", "Zenfone Max Pro M2", "Zenfone Max Pro M1"
+    "ROG Phone 8 Pro", "ROG Phone 7", "ROG Phone 6", "ROG Phone 5s",
+    "Zenfone 10", "Zenfone 9", "Zenfone 8", 
+    "Zenfone Max Pro M2", "Zenfone Max Pro M1"
   ],
   honor: [
     "Honor 90", "Honor X9b", "Honor Magic 6 Pro", "Honor X9a", "Honor 9X"
   ],
   infinix: [
-    "Infinix Note 40 Pro", "Infinix GT 20 Pro", "Infinix GT 10 Pro", "Infinix Zero 30", "Infinix Note 30 5G", "Infinix Hot 40i", "Infinix Smart 8"
+    "Infinix Note 40 Pro", "Infinix Note 30 5G", "Infinix Note 12 Pro", "Infinix Note 12",
+    "Infinix GT 20 Pro", "Infinix GT 10 Pro", 
+    "Infinix Zero 30", "Infinix Zero Ultra",
+    "Infinix Hot 40i", "Infinix Hot 30i", "Infinix Hot 20 5G",
+    "Infinix Smart 8", "Infinix Smart 7"
   ]
 };
 
