@@ -230,47 +230,69 @@ const brandData: Record<string, string[]> = {
     "Galaxy Note 20 Ultra", "Galaxy Note 20", 
     "Galaxy Note 10 Plus", "Galaxy Note 10",
     "Galaxy Z Fold 5", "Galaxy Z Flip 5", "Galaxy Z Fold 4", "Galaxy Z Flip 4",
-    "Galaxy A55", "Galaxy A54", "Galaxy A34", "Galaxy A24", "Galaxy A14",
-    "Galaxy M55", "Galaxy M54", "Galaxy M34", "Galaxy M14", "Galaxy F54"
+    // EXPANDED A SERIES
+    "Galaxy A55", "Galaxy A54", "Galaxy A34", "Galaxy A25", "Galaxy A24", "Galaxy A15", "Galaxy A14", "Galaxy A05s", "Galaxy A05",
+    // EXPANDED M SERIES
+    "Galaxy M55", "Galaxy M54", "Galaxy M34", "Galaxy M14", "Galaxy M04",
+    // EXPANDED F SERIES
+    "Galaxy F54", "Galaxy F34", "Galaxy F15", "Galaxy F14"
   ],
   oneplus: [
     "OnePlus 12", "OnePlus 12R", "OnePlus 11", "OnePlus 11R",
     "OnePlus 10 Pro", "OnePlus 10T", "OnePlus 10R",
     "OnePlus 9 Pro", "OnePlus 9", "OnePlus 9RT", "OnePlus 9R",
     "OnePlus 8 Pro", "OnePlus 8T", "OnePlus 8",
-    "OnePlus Nord 4", "OnePlus Nord 3", "OnePlus Nord CE 4", "OnePlus Nord CE 3",
-    "OnePlus Nord 2T"
+    "OnePlus Nord 4", "OnePlus Nord 3", "OnePlus Nord CE 4", "OnePlus Nord CE 3", "OnePlus Nord CE 3 Lite",
+    "OnePlus Nord 2T", "OnePlus Nord CE 2 Lite"
   ],
   xiaomi: [
     "Xiaomi 14 Ultra", "Xiaomi 14", "Xiaomi 13 Pro", "Xiaomi 13",
-    "Xiaomi 12 Pro", "Xiaomi 12", "Redmi Note 13 Pro+", "Redmi Note 13 Pro",
-    "Redmi Note 13", "Redmi Note 12 Pro+", "Redmi Note 12 Pro", "Redmi Note 12",
-    "Redmi 13C", "Redmi 12 5G", "Redmi A3"
+    "Xiaomi 12 Pro", "Xiaomi 12", 
+    // REDMI NOTE SERIES (The heavy hitters)
+    "Redmi Note 13 Pro+", "Redmi Note 13 Pro", "Redmi Note 13", 
+    "Redmi Note 12 Pro+", "Redmi Note 12 Pro", "Redmi Note 12",
+    "Redmi Note 11 Pro+", "Redmi Note 11 Pro", "Redmi Note 11",
+    "Redmi Note 10 Pro Max", "Redmi Note 10 Pro", "Redmi Note 10",
+    // REDMI BUDGET
+    "Redmi 13C", "Redmi 12 5G", "Redmi 12", "Redmi 10 Power", "Redmi A3"
   ],
   vivo: [
     "Vivo X100 Pro", "Vivo X100", "Vivo X90 Pro", "Vivo V30 Pro", "Vivo V30",
-    "Vivo V29 Pro", "Vivo V29", "Vivo T2 Pro", "Vivo T2", "Vivo Y200e", "Vivo Y200"
+    "Vivo V29 Pro", "Vivo V29", "Vivo T2 Pro", "Vivo T2", "Vivo T2x",
+    // VIVO Y SERIES (Volume Kings)
+    "Vivo Y200e", "Vivo Y200", "Vivo Y100", "Vivo Y56", "Vivo Y36", "Vivo Y28", "Vivo Y27", "Vivo Y17s", "Vivo Y16", "Vivo Y02t"
   ],
   oppo: [
-    "Oppo Find N3 Flip", "Oppo Find X7 Ultra", "Oppo Reno 11 Pro", "Oppo Reno 11",
-    "Oppo Reno 10 Pro+", "Oppo Reno 10 Pro", "Oppo F25 Pro", "Oppo F23", "Oppo A79", "Oppo A78"
+    "Oppo Find N3 Flip", "Oppo Find X7 Ultra", 
+    "Oppo Reno 11 Pro", "Oppo Reno 11", "Oppo Reno 10 Pro+", "Oppo Reno 10 Pro", 
+    "Oppo F25 Pro", "Oppo F23", "Oppo F21s Pro",
+    // OPPO A SERIES (Volume Kings)
+    "Oppo A79", "Oppo A78 5G", "Oppo A78", "Oppo A59 5G", "Oppo A58", "Oppo A38", "Oppo A18"
   ],
   realme: [
     "Realme 12 Pro+", "Realme 12 Pro", "Realme 12+", "Realme 12x",
-    "Realme 11 Pro+", "Realme 11 Pro", "Realme 11x", "Realme GT 2 Pro", "Realme Narzo 70 Pro", "Realme C67"
+    "Realme 11 Pro+", "Realme 11 Pro", "Realme 11x", 
+    "Realme GT 2 Pro", 
+    // NARZO & C SERIES
+    "Realme Narzo 70 Pro", "Realme Narzo 60x", "Realme Narzo N53",
+    "Realme C67", "Realme C55", "Realme C53", "Realme C51"
   ],
   google: [
     "Pixel 8 Pro", "Pixel 8", "Pixel 7 Pro", "Pixel 7", "Pixel 7a",
     "Pixel 6 Pro", "Pixel 6", "Pixel 6a", "Pixel 5"
   ],
   poco: [
-    "Poco X6 Pro", "Poco X6", "Poco F5", "Poco M6 Pro", "Poco C65"
+    "Poco X6 Pro", "Poco X6", "Poco X5 Pro", "Poco F5", 
+    "Poco M6 Pro", "Poco M6 5G", "Poco M5",
+    "Poco C65", "Poco C55", "Poco C51"
   ],
   iqoo: [
-    "iQOO 12", "iQOO 11", "iQOO Neo 9 Pro", "iQOO Neo 7 Pro", "iQOO Z9"
+    "iQOO 12", "iQOO 11", "iQOO Neo 9 Pro", "iQOO Neo 7 Pro", "iQOO Z9", "iQOO Z7 Pro"
   ],
   motorola: [
-    "Moto Edge 50 Pro", "Moto Edge 40 Neo", "Moto G84", "Moto G54", "Razr 40 Ultra"
+    "Moto Edge 50 Pro", "Moto Edge 40 Neo", 
+    "Moto G84", "Moto G54", "Moto G34 5G", "Moto G24 Power",
+    "Razr 40 Ultra"
   ],
   nothing: [
     "Nothing Phone (2a)", "Nothing Phone (2)", "Nothing Phone (1)"
