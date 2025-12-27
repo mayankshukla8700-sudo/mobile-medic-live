@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+// FIX: Use "@" to always find the root folder correctly
+import { supabase } from "@/lib/supabase"; 
 
-// FIX 1: Use "../../" to go back to the Root folder to find 'lib'
-import { supabase } from "../../lib/supabase"; 
-
-// FIX 2: Use CalendarDays icon to avoid name conflict with Calendar component
 import { 
   Loader2, User, Phone, MapPin, CheckCircle, ArrowRight, 
   Home, Building, Hash, Navigation, Landmark, Plus, X, 
@@ -14,10 +12,10 @@ import {
 
 import { toast } from "sonner";
 
-// FIX 3: Use "../../" to go back to Root folder to find 'components/ui'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../../components/ui/sheet";
-import { Calendar } from "../../components/ui/calendar"; 
-import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover"; 
+// FIX: Use "@" for components too
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Calendar } from "@/components/ui/calendar"; 
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"; 
 
 // --- SMART PINCODE DATABASE ---
 const pincodeData: Record<string, string> = {
@@ -131,13 +129,6 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
       return;
     }
 
-    if (showDropOptions && !isDropSame && !dropAddress) {
-      toast.error("Please add a Drop Address");
-      setLoading(false);
-      return;
-    }
-
-    // --- FIX: Explicitly type 'finalDate' as string so it accepts any text ---
     let finalDate: string = dateSelection; 
     
     if (dateSelection === "Later" && customDate) {
@@ -154,6 +145,7 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
         ? `Pickup/Drop: ${pickupAddress}` 
         : `PICKUP: ${pickupAddress} || DROP: ${dropAddress}`;
 
+      // --- SUPABASE INSERT ---
       const { error } = await supabase
         .from('bookings')
         .insert([
@@ -169,33 +161,17 @@ export default function RepairForm({ selectedBrand, selectedModel, selectedIssue
           }
         ]);
 
-      if (error) throw error;
-
-      // --- TELEGRAM NOTIFICATION TRIGGER ---
-      try {
-        await fetch("/api/notify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: name,
-            phone: phone,
-            model: `${selectedBrand} ${selectedModel}`,
-            price: estimatedPrice,
-            date: finalDate,
-            address: finalAddressString,
-          }),
-        });
-      } catch (notifyErr) {
-        console.error("Notification failed, but booking saved.", notifyErr);
+      if (error) {
+        console.error("Supabase Error:", error);
+        throw error;
       }
-      // -------------------------------------
 
       setSuccess(true);
       toast.success("Booking Confirmed!");
 
     } catch (err) {
       console.error("Booking Error:", err);
-      toast.error("Connection Failed. Try again.");
+      toast.error("Connection Failed. Please try again.");
     } finally {
       setLoading(false);
     }
