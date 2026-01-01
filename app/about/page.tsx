@@ -13,8 +13,8 @@ export default function AboutPage() {
           <p className="text-lg text-slate-300 leading-relaxed">
             We know you are busy. That is why we come to you.
             <br />
-            We pick up your phone, fix it with <span className="text-white font-semibold">expert care</span>, and deliver it back to you the 
-            <span className="text-blue-400 font-bold"> very same day</span>.
+            We pick up your phone, fix it with <span className="text-white font-semibold">expert care</span>, and deliver it back to you 
+            <span className="text-blue-400 font-bold"> in just 90 minutes</span>.
           </p>
         </div>
       </section>
@@ -78,7 +78,7 @@ export default function AboutPage() {
                 <Mail className="w-6 h-6 text-blue-600 shrink-0 mt-1" />
                 <div>
                   <h4 className="font-semibold text-slate-900">Email</h4>
-                  <p className="text-slate-600">support@mobilemedic.in</p>
+                  <p className="text-slate-600">support@themobilemedic.in</p>
                 </div>
               </div>
             </div>
