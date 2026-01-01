@@ -6,31 +6,40 @@ import Link from "next/link";
 import { Toaster } from "sonner"; 
 import { Phone } from "lucide-react"; 
 import Footer from "./components/Footer"; 
-// FIXED: Using ./ instead of @/ to prevent errors
 import WhatsAppButton from "./components/WhatsAppButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// 🚀 1. SUPERCHARGED SEO METADATA
 export const metadata: Metadata = {
-  title: "The Mobile Medic | Rated #1 Doorstep Repair",
-  description: "Instant price quotes for iPhone, Samsung, & OnePlus. Expert technicians come to your home. 6 Months Warranty.",
-  
-  // UPDATED: Now pointing to your new domain for better Google ranking
-  metadataBase: new URL('https://www.themobilemedic.in'), 
-  
+  title: {
+    default: "The Mobile Medic | #1 Doorstep Mobile Repair in Delhi NCR",
+    template: "%s | The Mobile Medic"
+  },
+  description: "Expert mobile repair at your doorstep in 30 mins. We fix iPhone, Samsung, OnePlus & more. Screen replacement, battery change & motherboard repair in Delhi, Noida & Gurugram.",
+  keywords: [
+    "Mobile Repair Delhi", "iPhone Screen Repair", "Samsung Mobile Repair", 
+    "Doorstep Mobile Repair", "Mobile Medic", "Phone Repair Near Me", 
+    "Cheap iPhone Screen", "OnePlus Battery Replacement", "Mobile Repair Home Service"
+  ],
+  metadataBase: new URL('https://www.themobilemedic.in'),
+  alternates: {
+    canonical: '/',
+  },
   icons: {
     icon: "/logo.png", 
   },
-  
   openGraph: {
-    title: "The Mobile Medic | We Fix It Fast",
-    description: "Broken Phone? Get it fixed at your doorstep in 30 mins.",
+    title: "The Mobile Medic - Instant Mobile Repair at Home",
+    description: "Don't go to the shop. We come to you! 30-min mobile repair service in Delhi NCR.",
+    url: 'https://www.themobilemedic.in',
+    siteName: 'The Mobile Medic',
     images: [
       {
-        url: '/opengraph-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'The Mobile Medic Repair Service',
+        url: '/logo.png', // Fallback to logo if you don't have a specific OG image yet
+        width: 800,
+        height: 600,
+        alt: 'The Mobile Medic Logo',
       },
     ],
     locale: 'en_IN',
@@ -43,10 +52,51 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // 🚀 2. LOCAL BUSINESS SCHEMA (Makes you show up on Google Maps/Search properly)
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "MobilePhoneRepair",
+    "name": "The Mobile Medic",
+    "image": "https://www.themobilemedic.in/logo.png",
+    "description": "Premium doorstep mobile repair service in Delhi NCR.",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Serving Delhi NCR",
+      "addressLocality": "New Delhi",
+      "addressRegion": "Delhi",
+      "postalCode": "110001",
+      "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 28.6139,
+      "longitude": 77.2090
+    },
+    "url": "https://www.themobilemedic.in",
+    "telephone": "+919354566791",
+    "priceRange": "₹₹",
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+        ],
+        "opens": "09:00",
+        "closes": "21:00"
+      }
+    ]
+  };
+
   return (
     <html lang="en">
       <body className={`${inter.className} bg-slate-50 flex flex-col min-h-screen`}>
         
+        {/* Inject Schema for Google */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+
         {/* --- HEADER --- */}
         <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white shadow-sm">
           <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
